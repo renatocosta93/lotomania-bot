@@ -19,7 +19,8 @@ def obter_ultimo_resultado():
             "data": dados['dataApuracao'],
             "dezenas": sorted([int(d) for d in dados['listaDezenas']]),
             "acumulou": dados.get('acumulado', False),
-            "ganhadores": dados.get('quantidadeGanhadores', 0)
+            "ganhadores": dados.get('quantidadeGanhadores', 0),
+            "valor_premio": dados.get('valorEstimadoProximoConcurso', 0)
         }
     except Exception as e:
         print("Erro na API:", e)
@@ -29,7 +30,7 @@ def carregar_dados():
     try:
         with open(ARQUIVO_DADOS, 'r') as f: return json.load(f)
     except:
-        return {"concursos": [], "ciclo_atual": list(range(100))}
+        return {"concursos": [], "ciclo_atual": list(range(100)), "last_message_id": None}
 
 def salvar_dados(dados):
     brt = timezone(timedelta(hours=-3))
@@ -72,15 +73,37 @@ def validar_bilhete(palpite):
     if any(q < 10 or q > 15 for q in [q1,q2,q3,q4]): return False
     return True
 
-def enviar_telegram(msg):
-    requests.post(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", 
-                  json={'chat_id': TELEGRAM_CHAT_ID, 'text': msg, 'parse_mode': 'Markdown', 'disable_web_page_preview': True})
+def apagar_mensagem_anterior(message_id):
+    if message_id:
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/deleteMessage"
+        requests.post(url, json={'chat_id': TELEGRAM_CHAT_ID, 'message_id': message_id})
+
+def enviar_telegram(msg, dados):
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    res = requests.post(url, json={'chat_id': TELEGRAM_CHAT_ID, 'text': msg, 'parse_mode': 'Markdown', 'disable_web_page_preview': True})
+    
+    if res.status_code == 200:
+        novo_id = res.json().get("result", {}).get("message_id")
+        if novo_id:
+            apagar_mensagem_anterior(dados.get("last_message_id"))
+            dados["last_message_id"] = novo_id
+
+def formatar_moeda(valor):
+    try:
+        return f"R$ {float(valor):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    except:
+        return "R$ 0,00"
 
 def executar():
     dados = carregar_dados()
     novo = obter_ultimo_resultado()
     
     concurso_base = "Desconhecido"
+    data_sorteio = "Data Desconhecida"
+    premio = "R$ 0,00"
+    ganhadores = 0
+    status_premio = "Desconhecido"
+    prox_concurso = "Desconhecido"
     
     if novo and (not dados['concursos'] or dados['concursos'][0]['concurso'] != novo['concurso']):
         dados['concursos'].insert(0, novo)
@@ -89,11 +112,19 @@ def executar():
             if d in dados['ciclo_atual']: dados['ciclo_atual'].remove(d)
         if not dados['ciclo_atual']: dados['ciclo_atual'] = list(range(100))
         
-    salvar_dados(dados)
-    
     if dados['concursos']:
-        concurso_base = dados['concursos'][0]['concurso']
-        ultimas_dezenas = dados['concursos'][0]['dezenas']
+        ultimo_conc = dados['concursos'][0]
+        concurso_base = ultimo_conc['concurso']
+        data_sorteio = ultimo_conc['data']
+        ultimas_dezenas = ultimo_conc['dezenas']
+        ganhadores = ultimo_conc.get('ganhadores', 0)
+        premio = formatar_moeda(ultimo_conc.get('valor_premio', 0))
+        prox_concurso = int(concurso_base) + 1
+        
+        if ultimo_conc.get('acumulou'):
+            status_premio = "🚨 ACUMULOU!"
+        else:
+            status_premio = f"🎉 {ganhadores} Ganhador(es)"
     else:
         ultimas_dezenas = []
 
@@ -106,28 +137,47 @@ def executar():
         t+=1
 
     if not bilhete:
-        enviar_telegram("⚠️ *Alerta:* Falha ao gerar palpite seguro.")
+        enviar_telegram("⚠️ *Alerta:* Falha ao gerar palpite seguro.", dados)
         return
 
     espelho = sorted(list(set(range(100)) - set(bilhete)))
     
-    pares = sum(1 for n in bilhete if n % 2 == 0)
-    impares = 50 - pares
-    repetidas = len(set(bilhete).intersection(set(ultimas_dezenas)))
-    faltam_ciclo = len(dados.get('ciclo_atual', []))
+    # Análises para o texto
+    freq = Counter()
+    for conc in dados['concursos']: freq.update(conc['dezenas'])
+    ordem = [item[0] for item in freq.most_common()]
+    quente = ordem[0] if ordem else "N/A"
+    fria = ordem[-1] if ordem else "N/A"
     
+    faltam_ciclo = dados.get('ciclo_atual', [])
+    str_ciclo = ", ".join([f"{n:02d}" for n in faltam_ciclo[:10]])
+    if len(faltam_ciclo) > 10:
+        str_ciclo += "..."
+        
     str_prin = ' '.join(f'{n:02d}' for n in bilhete)
     str_esp = ' '.join(f'{n:02d}' for n in espelho)
+    str_ult = ' '.join(f'{n:02d}' for n in ultimas_dezenas)
 
-    msg = (f"🤖 *Lotomania Premium* - Base Conc. {concurso_base}\n\n"
-           f"📊 *Análise do Palpite:*\n"
-           f"• Pares: {pares} | Ímpares: {impares}\n"
-           f"• Repetidas do último: {repetidas}\n"
-           f"• Faltam pro Ciclo: {faltam_ciclo} dezenas\n\n"
-           f"🎯 *Aposta Principal:*\n`{str_prin}`\n\n"
-           f"🛡️ *Aposta Espelho:*\n`{str_esp}`\n\n"
-           f"🌐 *Acesse o Painel Completo:*\n[Clique aqui para ver o Mapa de Calor]({LINK_PAINEL})")
+    msg = (f"🍀 *Painel Lotomania Atualizado*\n"
+           f"🔄 Última Atualização: {datetime.now(timezone(timedelta(hours=-3))).strftime('%d/%m/%Y às %H:%M')}\n\n"
+           f"🏆 *Último Sorteio:* {concurso_base} ({data_sorteio})\n"
+           f"🔢 *Dezenas:* {str_ult}\n"
+           f"👤 *Ganhadores (20 pts):* {status_premio}\n"
+           f"💰 *Estimativa Próximo:* {premio}\n\n"
+           f"🔮 *Próximo Sorteio:* {prox_concurso}\n\n"
+           f"🤖 *Análise do Assistente Preditivo:*\n"
+           f"Aqui vai a minha leitura cruzando as estatísticas dos 50 jogos:\n\n"
+           f"• *Para Fixar:* A dezena {quente:02d} está muito quente. A chance matemática dela continuar saindo hoje é altíssima.\n"
+           f"• *Ciclo Atual:* Faltam as dezenas {str_ciclo}. O foco do gerador foi fechar esse ciclo.\n"
+           f"• *Para Evitar:* A dezena {fria:02d} atingiu seu limite de atraso (está fria demais). O algoritmo minimizou a chance dela.\n\n"
+           f"🎯 *Palpite Principal (50 Dezenas):*\n`{str_prin}`\n\n"
+           f"🛡️ *Aposta Espelho (50 Dezenas):*\n`{str_esp}`\n"
+           f"_(Gerado cruzando o ciclo, fixando atrasos e balanceando quadrantes)_\n\n"
+           f"✅ *Base:* 50 Jogos\n"
+           f"🔗 *Seu Painel:* [Clique Aqui]({LINK_PAINEL})\n"
+           f"🏦 *Fonte Oficial:* Caixa Econômica")
     
-    enviar_telegram(msg)
+    enviar_telegram(msg, dados)
+    salvar_dados(dados)
 
 if __name__ == "__main__": executar()
