@@ -1,17 +1,129 @@
-<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Lotomania</title><style>body{font-family:sans-serif;text-align:center;background:#f4f4f9} .grid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-width:400px;margin:20px auto;} .dz{padding:10px 0;font-weight:bold;background:#ddd;border-radius:3px;} .frio{background:#a4c2f4;} .quente{background:#ff9999;} .extremo{background:#ff4d4d;color:#fff;}</style></head><body>
-<h2>Lotomania (Mapa)</h2><div class="grid" id="v"></div>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Lotomania Premium</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #333; margin: 0; padding: 15px; }
+        .container { max-width: 800px; margin: auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { color: #f37021; text-align: center; margin-bottom: 5px; font-size: 24px; }
+        .status-bar { text-align: center; font-size: 14px; color: #666; margin-bottom: 20px; }
+        
+        .card { background: #f9f9f9; border-left: 5px solid #f37021; padding: 15px; margin-bottom: 20px; border-radius: 4px; }
+        .card h3 { margin: 0 0 10px 0; color: #444; }
+        
+        .bolinhas-sorteio { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 10px; }
+        .bola { width: 32px; height: 32px; border-radius: 50%; background: #f37021; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; max-width: 500px; margin: 0 auto 30px auto; }
+        .dz { padding: 10px 0; text-align: center; font-weight: bold; font-size: 16px; border-radius: 4px; background: #e0e0e0; border: 1px solid #ccc; }
+        
+        .frio { background-color: #a4c2f4; border-color: #7b9fd6; }
+        .quente { background-color: #ff9999; border-color: #e07b7b; }
+        .extremo { background-color: #ff4d4d; color: #fff; border-color: #cc0000; }
+        
+        .info-dupla { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 15px; }
+        .info-box { flex: 1; min-width: 200px; background: #f1f3f4; padding: 15px; border-radius: 8px; text-align: center; }
+        .info-box span { display: block; word-wrap: break-word; font-family: monospace; font-size: 15px; margin-top: 10px; color: #222;}
+        
+        footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 13px; color: #777; line-height: 1.6; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🎰 Painel Lotomania Inteligente</h1>
+    <div class="status-bar" id="data-atualizacao">Carregando painel...</div>
+
+    <div class="card" id="card-ultimo">
+        <h3 id="titulo-ultimo">Último Sorteio (Buscando...)</h3>
+        <div class="bolinhas-sorteio" id="bolas-ultimo"></div>
+        <p id="info-premio" style="text-align: center; font-weight: bold; font-size: 14px; margin: 0;"></p>
+    </div>
+
+    <h3 style="text-align: center; color: #444;">🔥 Mapa de Calor (Últimos 50 concursos)</h3>
+    <p style="text-align: center; font-size: 13px; margin-top: -10px;">
+        <span style="color:#ff4d4d; font-weight:bold;">Vermelho (Quentes)</span> | 
+        <span style="color:#a4c2f4; font-weight:bold;">Azul (Frias)</span>
+    </p>
+    <div class="grid" id="volante"></div>
+
+    <div class="info-dupla">
+        <div class="info-box">
+            <h4 style="margin: 0; color: #f37021;">🔄 Ciclo Atual</h4>
+            <p style="margin: 5px 0 0 0; font-size: 12px;">Dezenas que faltam sair:</p>
+            <span id="txt-ciclo"></span>
+        </div>
+        <div class="info-box">
+            <h4 style="margin: 0; color: #ff4d4d;">🔥 Top 10 Quentes</h4>
+            <p style="margin: 5px 0 0 0; font-size: 12px;">As que mais saíram:</p>
+            <span id="txt-quentes"></span>
+        </div>
+    </div>
+
+    <footer>
+        <strong>Como o Robô Funciona?</strong><br>
+        1. <strong>Roleta Viciada:</strong> O algoritmo sorteia 50 números, mas dá mais chances para dezenas quentes e dezenas que faltam para fechar o ciclo.<br>
+        2. <strong>Validador:</strong> O robô rejeita jogos com desequilíbrio (ex: aceita apenas entre 22 e 28 pares) e evita colunas inteiras marcadas.<br>
+        3. <strong>Aposta-Espelho:</strong> O sistema sempre gera um bilhete secundário com as 50 dezenas que ficaram de fora, garantindo proteção total caso o bilhete principal faça 0 acertos.
+    </footer>
+</div>
+
 <script>
-fetch('data.json').then(r=>r.json()).then(d=>{
-    let f=new Array(100).fill(0);
-    d.concursos.forEach(c=>c.dezenas.forEach(z=>f[z]++));
-    let v=document.getElementById('v');
-    for(let i=0;i<100;i++){
-        let b=document.createElement('div');
-        b.innerText=i<10?'0'+i:i; b.className='dz';
-        if(f[i]>=7) b.classList.add('extremo');
-        else if(f[i]>=5) b.classList.add('quente');
-        else if(f[i]<=2) b.classList.add('frio');
-        v.appendChild(b);
-    }
-});
-</script></body></html>
+    fetch('data.json?t=' + new Date().getTime())
+    .then(response => response.json())
+    .then(data => {
+        // Atualização e Último Concurso
+        document.getElementById('data-atualizacao').innerHTML = "⏳ Última atualização do robô: <b>" + (data.ultima_atualizacao || 'Desconhecida') + "</b>";
+        
+        if(data.concursos && data.concursos.length > 0) {
+            let ultimo = data.concursos[0];
+            document.getElementById('titulo-ultimo').innerText = `Último Sorteio: Concurso ${ultimo.concurso} (${ultimo.data})`;
+            
+            let bolasHtml = '';
+            ultimo.dezenas.forEach(d => { bolasHtml += `<div class="bola">${d.toString().padStart(2, '0')}</div>`; });
+            document.getElementById('bolas-ultimo').innerHTML = bolasHtml;
+            
+            let txtPremio = ultimo.acumulou ? "🚨 ACUMULOU!" : `🎉 ${ultimo.ganhadores} Ganhador(es)!`;
+            document.getElementById('info-premio').innerText = txtPremio;
+            document.getElementById('info-premio').style.color = ultimo.acumulou ? "#cc0000" : "#2e7d32";
+        }
+
+        // Frequências para o Mapa de Calor e Quentes
+        let frequencias = new Array(100).fill(0);
+        data.concursos.forEach(conc => {
+            conc.dezenas.forEach(dez => frequencias[dez]++);
+        });
+
+        // Top 10 Quentes
+        let objFreq = [];
+        for(let i=0; i<100; i++) objFreq.push({dez: i, qtd: frequencias[i]});
+        objFreq.sort((a,b) => b.qtd - a.qtd); // Decrescente
+        let top10 = objFreq.slice(0, 10).map(x => x.dez.toString().padStart(2,'0')).join(' - ');
+        document.getElementById('txt-quentes').innerText = top10;
+
+        // Faltam para o ciclo
+        let ciclo = data.ciclo_atual || [];
+        document.getElementById('txt-ciclo').innerText = ciclo.length > 0 ? ciclo.map(x => x.toString().padStart(2,'0')).join(' - ') : "CICLO FECHADO!";
+
+        // Desenhar Mapa de Calor
+        const volante = document.getElementById('volante');
+        for (let i = 0; i < 100; i++) {
+            let box = document.createElement('div');
+            box.innerText = i.toString().padStart(2, '0');
+            box.className = 'dz';
+            let f = frequencias[i];
+            
+            if (f >= 7) box.classList.add('extremo');
+            else if (f >= 5) box.classList.add('quente');
+            else if (f <= 2) box.classList.add('frio');
+            
+            volante.appendChild(box);
+        }
+    })
+    .catch(error => {
+        document.getElementById('titulo-ultimo').innerText = "Erro ao carregar os dados!";
+    });
+</script>
+</body>
+</html>
