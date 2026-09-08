@@ -1,0 +1,17 @@
+<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Lotomania</title><style>body{font-family:sans-serif;text-align:center;background:#f4f4f9} .grid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-width:400px;margin:20px auto;} .dz{padding:10px 0;font-weight:bold;background:#ddd;border-radius:3px;} .frio{background:#a4c2f4;} .quente{background:#ff9999;} .extremo{background:#ff4d4d;color:#fff;}</style></head><body>
+<h2>Lotomania (Mapa)</h2><div class="grid" id="v"></div>
+<script>
+fetch('data.json').then(r=>r.json()).then(d=>{
+    let f=new Array(100).fill(0);
+    d.concursos.forEach(c=>c.dezenas.forEach(z=>f[z]++));
+    let v=document.getElementById('v');
+    for(let i=0;i<100;i++){
+        let b=document.createElement('div');
+        b.innerText=i<10?'0'+i:i; b.className='dz';
+        if(f[i]>=7) b.classList.add('extremo');
+        else if(f[i]>=5) b.classList.add('quente');
+        else if(f[i]<=2) b.classList.add('frio');
+        v.appendChild(b);
+    }
+});
+</script></body></html>
