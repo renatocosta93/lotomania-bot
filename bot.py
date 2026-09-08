@@ -1,26 +1,39 @@
 import json, random, requests, os, urllib3
+from datetime import datetime, timezone, timedelta
 from collections import Counter
-urllib3.disable_warnings() # Esconde aviso de segurança da caixa
+urllib3.disable_warnings()
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 ARQUIVO_DADOS = 'data.json'
+LINK_PAINEL = "https://renatocosta93.github.io/lotomania-bot/"
 
 def obter_ultimo_resultado():
     try:
-        # Puxa direto do site da Caixa
         headers = {'User-Agent': 'Mozilla/5.0'}
-        response = requests.get("https://servicebus2.caixa.gov.br/portaldeloterias/api/lotomania/", headers=headers, verify=False, timeout=15)
+        url = "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotomania/"
+        response = requests.get(url, headers=headers, verify=False, timeout=15)
         dados = response.json()
-        return {"concurso": dados['numero'], "data": dados['dataApuracao'], "dezenas": [int(d) for d in dados['listaDezenas']]}
+        return {
+            "concurso": dados['numero'],
+            "data": dados['dataApuracao'],
+            "dezenas": sorted([int(d) for d in dados['listaDezenas']]),
+            "acumulou": dados.get('acumulado', False),
+            "ganhadores": dados.get('quantidadeGanhadores', 0)
+        }
     except Exception as e:
-        print("Erro na API da Caixa:", e)
-        return None 
+        print("Erro na API:", e)
+        return None
 
 def carregar_dados():
-    with open(ARQUIVO_DADOS, 'r') as f: return json.load(f)
+    try:
+        with open(ARQUIVO_DADOS, 'r') as f: return json.load(f)
+    except:
+        return {"concursos": [], "ciclo_atual": list(range(100))}
 
 def salvar_dados(dados):
+    brt = timezone(timedelta(hours=-3))
+    dados['ultima_atualizacao'] = datetime.now(brt).strftime("%d/%m/%Y às %H:%M:%S")
     with open(ARQUIVO_DADOS, 'w') as f: json.dump(dados, f, indent=2)
 
 def calcular_pesos(dados):
@@ -57,55 +70,64 @@ def validar_bilhete(palpite):
         elif l>=5 and c<5: q3+=1
         else: q4+=1
     if any(q < 10 or q > 15 for q in [q1,q2,q3,q4]): return False
-    lin, col = [0]*10, [0]*10
-    for n in palpite:
-        lin[n//10]+=1; col[n%10]+=1
-    if max(lin)>7 or max(col)>7: return False
-    max_seq, seq_atual = 1, 1
-    for i in range(1, 50):
-        if palpite[i] == palpite[i-1]+1:
-            seq_atual+=1
-            if seq_atual > max_seq: max_seq = seq_atual
-        else: seq_atual=1
-    if max_seq >= 5: return False
     return True
 
 def enviar_telegram(msg):
-    # Print para o log do Github Actions
-    print("Enviando para o Telegram...")
-    res = requests.post(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", json={'chat_id': TELEGRAM_CHAT_ID, 'text': msg, 'parse_mode': 'Markdown'})
-    print("Status Telegram:", res.status_code)
+    requests.post(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", 
+                  json={'chat_id': TELEGRAM_CHAT_ID, 'text': msg, 'parse_mode': 'Markdown', 'disable_web_page_preview': True})
 
 def executar():
-    print("Iniciando robô...")
     dados = carregar_dados()
     novo = obter_ultimo_resultado()
     
+    concurso_base = "Desconhecido"
+    
     if novo and (not dados['concursos'] or dados['concursos'][0]['concurso'] != novo['concurso']):
-        print(f"Novo concurso encontrado: {novo['concurso']}")
         dados['concursos'].insert(0, novo)
         if len(dados['concursos']) > 50: dados['concursos'].pop()
         for d in novo['dezenas']:
             if d in dados['ciclo_atual']: dados['ciclo_atual'].remove(d)
         if not dados['ciclo_atual']: dados['ciclo_atual'] = list(range(100))
-        salvar_dados(dados)
+        
+    salvar_dados(dados)
+    
+    if dados['concursos']:
+        concurso_base = dados['concursos'][0]['concurso']
+        ultimas_dezenas = dados['concursos'][0]['dezenas']
     else:
-         print("Nenhum concurso novo (ou erro na API). Gerando palpite mesmo assim...")
+        ultimas_dezenas = []
 
     pesos = calcular_pesos(dados)
     t, bilhete = 0, None
     while t < 500:
         c = gerar_palpite(pesos)
-        if validar_bilhete(c): bilhete = c; break
+        if validar_bilhete(c): 
+            bilhete = c; break
         t+=1
-        
+
     if not bilhete:
-        print("Falha ao gerar o bilhete!")
-        enviar_telegram("⚠️ *Alerta:* Falha ao gerar palpite em 500 tentativas."); return
-        
+        enviar_telegram("⚠️ *Alerta:* Falha ao gerar palpite seguro.")
+        return
+
     espelho = sorted(list(set(range(100)) - set(bilhete)))
-    msg = f"🤖 *Lotomania - Palpite Inteligente*\n\n✅ *Principal:*\n`{' '.join(f'{n:02d}' for n in bilhete)}`\n\n🔄 *Espelho:*\n`{' '.join(f'{n:02d}' for n in espelho)}`"
+    
+    pares = sum(1 for n in bilhete if n % 2 == 0)
+    impares = 50 - pares
+    repetidas = len(set(bilhete).intersection(set(ultimas_dezenas)))
+    faltam_ciclo = len(dados.get('ciclo_atual', []))
+    
+    str_prin = ' '.join(f'{n:02d}' for n in bilhete)
+    str_esp = ' '.join(f'{n:02d}' for n in espelho)
+
+    msg = (f"🤖 *Lotomania Premium* - Base Conc. {concurso_base}\n\n"
+           f"📊 *Análise do Palpite:*\n"
+           f"• Pares: {pares} | Ímpares: {impares}\n"
+           f"• Repetidas do último: {repetidas}\n"
+           f"• Faltam pro Ciclo: {faltam_ciclo} dezenas\n\n"
+           f"🎯 *Aposta Principal:*\n`{str_prin}`\n\n"
+           f"🛡️ *Aposta Espelho:*\n`{str_esp}`\n\n"
+           f"🌐 *Acesse o Painel Completo:*\n[Clique aqui para ver o Mapa de Calor]({LINK_PAINEL})")
+    
     enviar_telegram(msg)
-    print("Robô finalizado com sucesso!")
 
 if __name__ == "__main__": executar()
