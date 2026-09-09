@@ -9,20 +9,15 @@
         :root { --primary: #f37021; --bg: #f4f7f6; --card-bg: #ffffff; --text: #333; --border: #e0e0e0; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; }
         .container { max-width: 800px; margin: 0 auto; }
-        
         .header { text-align: center; margin-bottom: 15px; }
         .header h1 { color: var(--primary); margin: 0; font-size: 1.6rem; }
         .last-update { font-size: 0.8rem; color: #666; background: #e9ecef; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-top: 5px;}
-        
         .card { background: var(--card-bg); border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
         .card-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; color: #2c3e50; border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; justify-content: space-between;}
-        
         .balls-container { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
         .ball { width: 32px; height: 32px; background: linear-gradient(135deg, #f37021, #d35400); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        
         .prize-info { text-align: center; font-size: 0.9rem; font-weight: bold; padding: 8px; border-radius: 6px; background: #e8f5e9; color: #2e7d32; margin-bottom: 8px;}
         .prize-acumulado { background: #ffebee; color: #c62828; }
-        
         .heatmap-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; max-width: 100%; margin: 10px auto; }
         .hm-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 4px; font-size: 0.85rem; }
         .hm-frio { background: #bbdefb; color: #0d47a1; }
@@ -30,13 +25,11 @@
         .hm-quente { background: #ffcdd2; color: #b71c1c; }
         .hm-extremo { background: #d32f2f; color: white; }
         .hm-legenda { font-size: 0.75rem; text-align: center; margin-bottom: 5px; }
-
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .stat-box { background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid #e9ecef; font-size: 0.85rem;}
         .stat-box h4 { margin: 0 0 5px 0; color: #444; font-size: 0.9rem;}
         .stat-list { font-family: monospace; font-size: 0.95rem; font-weight: bold; color: #222; word-break: break-word;}
         .alert-text { color: #d32f2f; font-weight: bold; }
-        
         textarea { width: 100%; height: 60px; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-family: monospace; font-size: 0.9rem; box-sizing: border-box; margin-bottom: 10px; resize: none;}
         button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;}
         button:active { background: #d35400; }
@@ -44,7 +37,6 @@
         .btn-blue { background: #2196F3; }
         .btn-half { width: 48%; display: inline-flex; }
         .btn-row { display: flex; justify-content: space-between; }
-
         .game-output { background: #fffde7; padding: 15px; border-radius: 8px; border: 1px dashed #fbc02d; margin-top: 15px; display: none; }
         .game-numbers { font-family: monospace; font-size: 1.1rem; font-weight: bold; color: #333; text-align: center; letter-spacing: 2px; line-height: 1.5; margin: 10px 0;}
         .eval-result { background: #f1f8e9; padding: 10px; border-left: 4px solid #8bc34a; font-size: 0.85rem; margin-top: 10px; display: none;}
@@ -56,7 +48,6 @@
             <h1>🎰 Lotomania Pro</h1>
             <div class="last-update" id="update-time">Sincronizando dados...</div>
         </div>
-
         <div class="card">
             <div class="card-title">
                 <span id="concurso-title">Último Sorteio</span>
@@ -68,7 +59,6 @@
                 🔮 Próximo Sorteio: <b id="next-draw-date">Buscando na base...</b>
             </div>
         </div>
-
         <div class="card">
             <div class="card-title">🔥 Mapa de Calor & Tendências</div>
             <div class="hm-legenda">
@@ -77,7 +67,6 @@
                 <span style="color:#0d47a1; font-weight:bold;">Azul (Frias)</span>
             </div>
             <div class="heatmap-grid" id="heatmap"></div>
-
             <div class="stats-grid">
                 <div class="stat-box">
                     <h4>🔥 Top 10 Quentes</h4>
@@ -97,7 +86,6 @@
                 </div>
             </div>
         </div>
-
         <div class="card">
             <div class="card-title">⚖️ Avaliador de Jogo</div>
             <p style="font-size: 0.8rem; margin: 0 0 10px 0; color: #666;">Cole suas 50 dezenas separadas por espaço para ver a força do seu jogo.</p>
@@ -105,12 +93,10 @@
             <button class="btn-blue" onclick="avaliarJogo()">Avaliar Jogo</button>
             <div id="eval-output" class="eval-result"></div>
         </div>
-
         <div class="card">
             <div class="card-title">🤖 Gerador Inteligente</div>
             <p style="font-size: 0.8rem; margin: 0 0 10px 0; color: #666;">O algoritmo cruza os atrasos, quentes e ciclo atual para montar o jogo ideal.</p>
             <button onclick="gerarJogo()">🎯 Gerar Jogo Ideal</button>
-            
             <div id="print-area" class="game-output">
                 <div style="text-align: center; font-weight: bold; color: var(--primary); margin-bottom: 5px;">Aposta Principal</div>
                 <div class="game-numbers" id="gen-principal"></div>
@@ -118,224 +104,15 @@
                 <div style="text-align: center; font-weight: bold; color: #2196F3; margin-bottom: 5px;">Aposta Espelho</div>
                 <div class="game-numbers" id="gen-espelho"></div>
             </div>
-
             <div id="export-buttons" class="btn-row" style="display: none; margin-top: 10px;">
                 <button class="btn-green btn-half" onclick="enviarWhatsAppTxt()">💬 Enviar Texto</button>
                 <button class="btn-blue btn-half" onclick="enviarWhatsAppImg()">📸 Enviar Imagem</button>
             </div>
         </div>
     </div>
-
+    <!-- NÚCLEO PROTEGIDO / OFUSCADO -->
     <script>
-        let dataGlobal = null;
-        let arrQuentes = [];
-        let arrFrias = [];
-        let cicloAtual = [];
-        let pesosGlobais = [];
-
-        fetch('data.json?t=' + new Date().getTime())
-        .then(res => res.json())
-        .then(data => {
-            dataGlobal = data;
-            document.getElementById('update-time').innerHTML = `Sincronizado: <b>${data.ultima_atualizacao || 'Hoje'}</b>`;
-            if(data.concursos && data.concursos.length > 0) {
-                renderizarUltimoSorteio(data.concursos[0]);
-                processarEstatisticas(data);
-            }
-        }).catch(err => document.getElementById('update-time').innerText = "Erro de conexão.");
-
-        function renderizarUltimoSorteio(ultimo) {
-            document.getElementById('concurso-title').innerText = `🏆 Conc. ${ultimo.concurso}`;
-            document.getElementById('concurso-date').innerText = ultimo.data;
-            document.getElementById('last-balls').innerHTML = ultimo.dezenas.map(d => `<div class="ball">${formatZ(d)}</div>`).join('');
-            
-            const pDiv = document.getElementById('prize-info');
-            const vPremio = "R$ " + parseFloat(ultimo.valor_premio || 0).toLocaleString('pt-BR', {minimumFractionDigits:2});
-            if(ultimo.acumulou) {
-                pDiv.className = 'prize-info prize-acumulado';
-                pDiv.innerText = `🚨 ACUMULOU! Estimativa: ${vPremio}`;
-            } else {
-                pDiv.className = 'prize-info';
-                pDiv.innerText = `🎉 ${ultimo.ganhadores} Ganhador(es)! Estimativa: ${vPremio}`;
-            }
-
-            const dataP = ultimo.data_proximo || "A definir";
-            const diaS = ultimo.dia_semana_proximo || "";
-            document.getElementById('next-draw-date').innerText = diaS ? `${dataP} (${diaS})` : dataP;
-        }
-
-        function processarEstatisticas(data) {
-            const concursos = data.concursos;
-            let freq = new Array(100).fill(0);
-            let atrasos = new Array(100).fill(-1);
-            let seqs = new Array(100).fill(0);
-            
-            for(let d = 0; d < 100; d++) {
-                let atrasoCount = 0;
-                let seqCount = 0;
-                let achouSorteio = false;
-                let falhou = false;
-
-                for(let i = 0; i < concursos.length; i++) {
-                    const conc = concursos[i].dezenas;
-                    // Blindagem: força as dezenas antigas a serem interpretadas como número
-                    if(conc.some(x => parseInt(x, 10) === d)) {
-                        freq[d]++;
-                        if(!achouSorteio) {
-                            achouSorteio = true;
-                            atrasoCount = i; 
-                        }
-                        if(!falhou) seqCount++;
-                    } else {
-                        if(!achouSorteio) atrasoCount++;
-                        if(achouSorteio) falhou = true;
-                    }
-                }
-                atrasos[d] = achouSorteio ? atrasoCount : 50;
-                seqs[d] = seqCount;
-            }
-
-            let hmHtml = '';
-            for(let i=0; i<100; i++) {
-                let f = freq[i];
-                let css = 'hm-regular';
-                if(f >= 7) css = 'hm-extremo';
-                else if(f >= 5) css = 'hm-quente';
-                else if(f <= 2) css = 'hm-frio';
-                hmHtml += `<div class="hm-cell ${css}">${formatZ(i)}</div>`;
-            }
-            document.getElementById('heatmap').innerHTML = hmHtml;
-
-            let objs = [];
-            for(let i=0; i<100; i++) objs.push({d: i, f: freq[i], a: atrasos[i], s: seqs[i]});
-            
-            objs.sort((a,b) => b.f - a.f);
-            arrQuentes = objs.slice(0,15).map(x => x.d);
-            arrFrias = objs.slice(-15).map(x => x.d);
-            
-            document.getElementById('txt-quentes').innerText = objs.slice(0,10).map(x => formatZ(x.d)).join(' ');
-            document.getElementById('txt-frias').innerText = objs.slice(-10).map(x => formatZ(x.d)).join(' ');
-
-            objs.sort((a,b) => b.a - a.a);
-            let topAtraso = objs[0];
-            document.getElementById('txt-atraso').innerText = `Dezena ${formatZ(topAtraso.d)} (${topAtraso.a} jogos atrasada)`;
-
-            objs.sort((a,b) => b.s - a.s);
-            let topSeq = objs[0];
-            document.getElementById('txt-sequencia').innerText = `Dezena ${formatZ(topSeq.d)} (Saiu ${topSeq.s} jogos seguidos)`;
-
-            cicloAtual = data.ciclo_atual || [];
-            pesosGlobais = new Array(100).fill(2);
-            for(let i=0; i<100; i++) {
-                if(arrQuentes.includes(i)) pesosGlobais[i] = 3;
-                if(arrFrias.includes(i)) pesosGlobais[i] = 1;
-                if(cicloAtual.includes(i)) pesosGlobais[i] = 5;
-            }
-        }
-
-        function avaliarJogo() {
-            if(!dataGlobal) return alert("Aguarde o carregamento dos dados.");
-            const input = document.getElementById('eval-input').value;
-            let numeros = input.match(/\d+/g);
-            if(!numeros) return alert("Insira dezenas válidas.");
-            numeros = [...new Set(numeros.map(n => parseInt(n, 10)))].filter(n => n >= 0 && n <= 99);
-            
-            if(numeros.length !== 50) return alert(`Um jogo da Lotomania exige 50 dezenas. Você inseriu ${numeros.length}.`);
-
-            let pares = 0, qQuentes = 0, qFrias = 0;
-            numeros.forEach(n => {
-                if(n % 2 === 0) pares++;
-                if(arrQuentes.includes(n)) qQuentes++;
-                if(arrFrias.includes(n)) qFrias++;
-            });
-
-            let impares = 50 - pares;
-            let statusPar = (pares >= 22 && pares <= 28) ? "✅ Ideal" : "⚠️ Desequilibrado";
-            
-            let laudo = `<b>Resultado:</b><br>`;
-            laudo += `• Pares/Ímpares: ${pares}/${impares} (${statusPar})<br>`;
-            laudo += `• Dezenas Quentes marcadas: ${qQuentes}<br>`;
-            laudo += `• Dezenas Frias marcadas: ${qFrias}<br>`;
-            
-            let pontuacao = 0;
-            if(pares >= 22 && pares <= 28) pontuacao++;
-            if(qQuentes >= 5) pontuacao++;
-
-            if(pontuacao === 2) laudo += `<br><span style="color:#2e7d32; font-weight:bold;">🚀 Laudo: Jogo EXCELENTE. Padrão Forte.</span>`;
-            else if(pontuacao === 1) laudo += `<br><span style="color:#f57c00; font-weight:bold;">⚖️ Laudo: Jogo EQUILIBRADO.</span>`;
-            else laudo += `<br><span style="color:#c62828; font-weight:bold;">❌ Laudo: Jogo FRACO. Exige correção.</span>`;
-
-            const out = document.getElementById('eval-output');
-            out.innerHTML = laudo;
-            out.style.display = 'block';
-        }
-
-        let palpiteAtual = "";
-        let espelhoAtual = "";
-
-        function gerarJogo() {
-            if(!dataGlobal || pesosGlobais.length === 0) return alert("Dados não carregados.");
-            let pop = Array.from({length: 100}, (_, i) => i);
-            let pesos = [...pesosGlobais];
-            let bilhete = [];
-
-            for(let i=0; i<50; i++) {
-                let soma = pesos.reduce((a, b) => a + b, 0);
-                let rand = Math.random() * soma;
-                let acumulado = 0, escolhidoIdx = 0;
-                for(let j=0; j<pop.length; j++) {
-                    acumulado += pesos[j];
-                    if(rand <= acumulado) { escolhidoIdx = j; break; }
-                }
-                bilhete.push(pop[escolhidoIdx]);
-                pop.splice(escolhidoIdx, 1);
-                pesos.splice(escolhidoIdx, 1);
-            }
-            bilhete.sort((a,b) => a - b);
-            
-            let pares = bilhete.filter(n => n%2===0).length;
-            if(pares < 22 || pares > 28) return gerarJogo();
-
-            let todos = new Set(Array.from({length: 100}, (_, i) => i));
-            let bilheteSet = new Set(bilhete);
-            let espelho = [...todos].filter(x => !bilheteSet.has(x)).sort((a,b) => a - b);
-
-            palpiteAtual = bilhete.map(formatZ).join(' ');
-            espelhoAtual = espelho.map(formatZ).join(' ');
-
-            document.getElementById('gen-principal').innerText = palpiteAtual;
-            document.getElementById('gen-espelho').innerText = espelhoAtual;
-            
-            document.getElementById('print-area').style.display = 'block';
-            document.getElementById('export-buttons').style.display = 'flex';
-        }
-
-        function enviarWhatsAppTxt() {
-            let texto = `🤖 *Lotomania Preditiva*\n\n🎯 *Aposta Principal:*\n${palpiteAtual}\n\n🛡️ *Espelho:*\n${espelhoAtual}`;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`, '_blank');
-        }
-
-        function enviarWhatsAppImg() {
-            const printArea = document.getElementById('print-area');
-            let oldBg = printArea.style.background;
-            printArea.style.background = "#ffffff";
-            html2canvas(printArea, {scale: 2}).then(canvas => {
-                printArea.style.background = oldBg; 
-                canvas.toBlob(blob => {
-                    const file = new File([blob], 'lotomania.png', { type: 'image/png' });
-                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                        navigator.share({ title: 'Lotomania', text: 'Meu jogo:', files: [file] }).catch(e => console.log(e));
-                    } else {
-                        let a = document.createElement('a');
-                        a.href = URL.createObjectURL(blob);
-                        a.download = 'meu_jogo.png';
-                        a.click();
-                        alert("Imagem salva! Envie pelo WhatsApp.");
-                    }
-                });
-            });
-        }
-        function formatZ(n) { return n < 10 ? '0'+n : n; }
+    eval(decodeURIComponent(escape(atob('CiAgICAgICAgbGV0IGRhdGFHbG9iYWwgPSBudWxsOwogICAgICAgIGxldCBhcnJRdWVudGVzID0gW107CiAgICAgICAgbGV0IGFyclJpYXMgPSBbXTsKICAgICAgICBsZXQgY2ljbG9BdHVhbCA9IFtdOwogICAgICAgIGxldCBwZXNvc0dsb2JhaXMgPSBbXTsKCiAgICAgICAgZmV0Y2goJ2RhdGEuanNvbj90PScgKyBuZXcgRGF0ZSgpLmdldFRpbWUoKSkKICAgICAgICAudGhlbihyZXMgPT4gcmVzLmpzb24oKSkKICAgICAgICAudGhlbihkYXRhID0+IHsKICAgICAgICAgICAgZGF0YUdsb2JhbCA9IGRhdGE7CiAgICAgICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd1cGRhdGUtdGltZScpLmlubmVySFRNTCA9IGBTaW5jcm9uaXphZG86IDxiPiske2RhdGEudWx0aW1hX2F0dWFsaXphY2FvIHx8ICdIb2plJ308L2I+YDsKICAgICAgICAgICAgaWYoZGF0YS5jb25jdXJzb3MgJiYgZGF0YS5jb25jdXJzb3MubGVuZ3RoID4gMCkgewogICAgICAgICAgICAgICAgcmVuZGVyaXphclVsdGltb1NvcnRlaW8oZGF0YS5jb25jdXJzb3NbMF0pOwogICAgICAgICAgICAgICAgcHJvY2Vzc2FyRXN0YXRpc3RpY2FzKGRhdGEpOwogICAgICAgICAgICB9CiAgICAgICAgfSkuY2F0Y2goZXJyID0+IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd1cGRhdGUtdGltZScpLmlubmVyVGV4dCA9ICJFcnJvIGRlIGNvbmV4w6NvLiIpOwoKICAgICAgICBmdW5jdGlvbiByZW5kZXJpemFyVWx0aW1vU29ydGVpbyh1bHRpbW8pIHsKICAgICAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NvbmN1cnNvLXRpdGxlJykuaW5uZXJUZXh0ID0gYEPDqyBDb25jLiAke3VsdGltby5jb25jdXJzb31gOwogICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY29uY3Vyc28tZGF0ZScpLmlubmVyVGV4dCA9IHVsdGltby5kYXRhOwogICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGFzdC1iYWxscycpLmlubmVySFRNTCA9IHVsdGltby5kZXplbmFzLm1hcChkID0+IGA8ZGl2IGNsYXNzPSJiYWxsIj4ke2Zvcm1hdFooZCl9PC9kaXY+YCkuam9pbignJyk7CiAgICAgICAgICAgIAogICAgICAgICAgICBjb25zdCBwRGl2ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3ByaXplLWluZm8nKTsKICAgICAgICAgICAgY29uc3QgdlByZW1pbyA9ICJSJCAiICsgcGFyc2VGbG9hdCh1bHRpbW8udmFsb3JfcHJlbWlvIHx8IDApLnRvTG9jYWxlU3RyaW5nKCdwdC1CUicsIHttaW5pbXVtRnJhY3Rpb25EaWdpdHMyfSk7CiAgICAgICAgICAgIGlmKHVsdGltby5hY3VtdWxvdSkgewogICAgICAgICAgICAgICAgcERpdi5jbGFzc05hbWUgPSAncHJpemUtaW5mbyBwcml6ZS1hY3VtdWxhZG8nOwogICAgICAgICAgICAgICAgcERpdi5pbm5lclRleHQgPSBg8J+agCBBQ1VNVUxPVSFfc3RpbWF0aXZhOiAke3ZQcmVtaW99YDsKICAgICAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgICAgIHBESXYuY2xhc3NOYW1lID0gJ3ByaXplLWluZm8nOwogICAgICAgICAgICAgICAgcERpdi5pbm5lclRleHQgPSBg8J+OiSAke3VsdGltby5nYW5oYWRvcmVzfSBHYW5oYWRvcihlcykhIEVzdGltYXRpdmE6ICR7dlByZW1pb31gOwogICAgICAgICAgICB9CgogICAgICAgICAgICBjb25zdCBkYXRhUCA9IHVsdGltby5kYXRhX3Byb3hpbW8gfHwgIkEgZGVmaW5pciI7CiAgICAgICAgICAgIGNvbnN0IGRpYVMgPSB1bHRpbW8uZGlhX3NlbWFuYV9wcm94aW1vIHx8ICIiOwogICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbmV4dC1kcmF3LWRhdGUnKS5pbm5lclRleHQgPSBkaWFTID8gYCR7ZGF0YVB9ICgke2RpYVN9KWAgOiBkYXRhUDsKICAgICAgICB9CgogICAgICAgIGZ1bmN0aW9uIHByb2Nlc3NhckVzdGF0aXN0aWNhcyhkYXRhKSB7CiAgICAgICAgICAgIGNvbnN0IGNvbmN1cnNvcyA9IGRhdGEuY29uY3Vyc29zOwogICAgICAgICAgICBsZXQgZnJlcSA9IG5ldyBBcnJheSgxMDApLmZpbGwoMCk7CiAgICAgICAgICAgIGxldCBhdHJhc29zID0gbmV3IEFycmF5KDEwMCkuZmlsbCgtMSk7CiAgICAgICAgICAgIGxldCBzZXFzID0gbmV3IEFycmF5KDEwMCkuZmlsbCgwKTsKICAgICAgICAgICAgCiAgICAgICAgICAgIGZvcihsZXQgZCA9IDA7IGQgPCAxMDA7IGQrKykgewogICAgICAgICAgICAgICAgbGV0IGF0cmFzb0NvdW50ID0gMDsKICAgICAgICAgICAgICAgIGxldCBzZXFDb3VudCA9IDA7CiAgICAgICAgICAgICAgICBsZXQgYWNob3VTb3J0ZWlvID0gZmFsc2U7CiAgICAgICAgICAgICAgICBsZXQgZmFsaG91ID0gZmFsc2U7CgogICAgICAgICAgICAgICAgZm9yKGxldCBpID0gMDsgaSA8IGNvbmN1cnNvcy5sZW5ndGg7IGkrKykgewogICAgICAgICAgICAgICAgICAgIGNvbnN0IGNvbmMgPSBjb25jdXJzb3NbaV0uZGV6ZW5hczsKICAgICAgICAgICAgICAgICAgICBpZihjb25jLnNvbWUoeCA9PiBwYXJzZUludCh4LCAxMCkgPT09IGQpKSB7CiAgICAgICAgICAgICAgICAgICAgICAgIGZyZXFbZF0rKzsKICAgICAgICAgICAgICAgICAgICAgICAgaWYoIWFjaG91U29ydGVpbykgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgYWNob3VTb3J0ZWlvID0gdHJ1ZTsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGF0cmFzb0NvdW50ID0gaTsgCiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgaWYoIWZhbGhvdSkgc2VxQ291bnQrKzsKICAgICAgICAgICAgICAgICAgICB9IGVsc2UgewogICAgICAgICAgICAgICAgICAgICAgICBpZighYWNob3VTb3J0ZWlvKSBhdHJhc29Db3VudCsrOwogICAgICAgICAgICAgICAgICAgICAgICBpZihhY2hvdVNvcnRlaW8pIGZhbGhvdSA9IHRydWU7CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgYXRyYXNvc1tkXSA9IGFjaG91U29ydGVpbyA/IGF0cmFzb0NvdW50IDogNTA7CiAgICAgICAgICAgICAgICBzZXFzW2RdID0gc2VxQ291bnQ7CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGxldCBobUh0bWwgPSAnJzsKICAgICAgICAgICAgZm9yKGxldCBpPTA7IGk8MTAwOyBpKyspIHsKICAgICAgICAgICAgICAgIGxldCBmID0gZnJlcVtJXTsKICAgICAgICAgICAgICAgIGxldCBjc3MgPSAnaG0tcmVndWxhcic7CiAgICAgICAgICAgICAgICBpZihmID49IDcpIGNzcyA9ICdobS1leHRyZW1vJzsKICAgICAgICAgICAgICAgIGVsc2UgaWYoZiA+PSA1KSBjc3MgPSAnaG0tcXVlbnRlJzsKICAgICAgICAgICAgICAgIGVsc2UgaWYoZiA8PSAyKSBjc3MgPSAnaG0tZnJpbyc7CiAgICAgICAgICAgICAgICBobUh0bWwgKz0gYDxkaXYgY2xhc3M9ImhtLWNlbGwgJHtjc3N9Ij4ke2Zvcm1hdFooaSl9PC9kaXY+YDsKICAgICAgICAgICAgfQogICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaGVhdG1hcCcpLmlubmVySFRNTCA9IGhtSHRtbDsKCiAgICAgICAgICAgIGxldCBvYmpzID0gW107CiAgICAgICAgICAgIGZvcihsZXQgaT0wOyBpPDEwMDsgaSsrKSBvYmpzLnB1c2goe2Q6IGksIGY6IGZyZXFbaV0sIGE6IGF0cmFzb3NbaV0sIHM6IHNlcXNbaV19KTsKICAgICAgICAgICAgCiAgICAgICAgICAgIG9ianMuc29ydCgoYSxiKSA9PiBiLmYgLSBhLmYpOwogICAgICAgICAgICBhcnJRdWVudGVzID0gb2Jqcy5zbGljZSgwLDE1KS5tYXAoeCA9PiB4LmQpOwogICAgICAgICAgICBhcnJSaWFzID0gb2Jqcy5zbGljZSgtMTUpLm1hcCh4ID0+IHguZCk7CiAgICAgICAgICAgIAogICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndHh0LXF1ZW50ZXMnKS5pbm5lclRleHQgPSBvYmpzLnNsaWNlKDAsMTApLm1hcCh4ID0+IGZvcm1hdFooeC5kKSkuam9pbignICcpOwogICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndHh0LWZyaWFzJykuaW5uZXJUZXh0ID0gb2Jqcy5zbGljZSgtMTApLm1hcCh4ID0+IGZvcm1hdFooeC5kKSkuam9pbignICcpOwoKICAgICAgICAgICAgb2Jqcy5zb3J0KChhLGIpID0+IGIuYSAtIGEuYSk7CiAgICAgICAgICAgIGxldCB0b3BBdHJhc28gPSBvYmpzWzBdOwogICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndHh0LWF0cmFzbycpLmlubmVyVGV4dCA9IGBEZXplbmEgJHtmb3JtYXRZKHRvcEF0cmFzby5kKX0gKCR7dG9wQXRyYXNvLmF9IGpvZ29zIGF0cmFzYWRhKWA7CgogICAgICAgICAgICBvYmpzLnNvcnQoKGEsYikgPT4gYi5zIC0gYS5zKTsKICAgICAgICAgICAgbGV0IHRvcFNlcSA9IG9ianNbMF07CiAgICAgICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0eHQtc2VxdWVuY2lhJykuaW5uZXJUZXh0ID0gYERlemVuYSAke2Zvcm1hdFzodG9wU2VxLmQpfSAoU2FpdSAke3RvcFNlcS5zfSBqb2dvcyBzZWd1aWRvcylgOwoKICAgICAgICAgICAgY2ljbG9BdHVhbCA9IGRhdGEuY2ljbG9fYXR1YWwgfHwgW107CiAgICAgICAgICAgIHBlc29zR2xvYmFpcyA9IG5ldyBBcnJheSgxMDApLmZpbGwoMik7CiAgICAgICAgICAgIGZvcihsZXQgaT0wOyBpPDEwMDsgaSsrKSB7CiAgICAgICAgICAgICAgICBpZihhcnJRdWVudGVzLmluY2x1ZGVzKGkpKSBwZXNvc0dsb2JhaXNbaV0gPSAzOwogICAgICAgICAgICAgICAgaWYoYXJyRnJpYXMuaW5jbHVkZXMoaSkpIHBlc29zR2xvYmFpc1tpXSA9IDE7CiAgICAgICAgICAgICAgICBpZihjaWNsb0F0dWFsLmluY2x1ZGVzKGkpKSBwZXNvc0dsb2JhaXNbaV0gPSA1OwogICAgICAgICAgICB9CiAgICAgICAgfQoKICAgICAgICBmdW5jdGlvbiBhdmFsaWFySm9nbygpIHsKICAgICAgICAgICAgaWYoIWRhdGFHbG9iYWwpIHJldHVybiBhbGVydCgiQWd1YXJkZSBvIGNhcnJlZ2FtZW50byBkb3MgZGFkb3MuIik7CiAgICAgICAgICAgIGNvbnN0IGlucHV0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2V2YWwtaW5wdXQnKS52YWx1ZTsKICAgICAgICAgICAgbGV0IG51bWVyb3MgPSBpbnB1dC5tYXRjaCgvXGQrL2cpOwogICAgICAgICAgICBpZighbnVtZXJvcykgcmV0dXJuIGFsZXJ0KCJJbnNpcmEgZGV6ZW5hcyB2w6FsaWRhcy4iKTsKICAgICAgICAgICAgbnVtZXJvcyA9IFsuLi5uZXcgU2V0KG51bWVyb3MubWFwKG4gPT4gcGFyc2VJbnQobiwgMTApKSldLmZpbHRlcihuID0+IG4gPj0gMCAmJiBuIDw9IDk5KTsKICAgICAgICAgICAgCiAgICAgICAgICAgIGlmKG51bWVyb3MubGVuZ3RoICE9PSA1MCkgcmV0dXJuIGFsZXJ0KGBVbSBqb2dvIGRhIExvdG9tYW5pYSBleGlnZSA1MCBkZXplbmFzLiBWb2PDqiBpbnNlcml1ICR7bnVtZXJvcy5sZW5ndGh9LmApOwoKICAgICAgICAgICAgbGV0IHBhcmVzID0gMCwgcVF1ZW50ZXMgPSAwLCBxRnJpYXMgPSAwOwogICAgICAgICAgICBudW1lcm9zLmZvckVhY2gobiA9PiB7CiAgICAgICAgICAgICAgICBpZihuICUgMiA9PT0gMCkgcGFyZXMrKzsKICAgICAgICAgICAgICAgIGlmKGFyclF1ZW50ZXMuaW5jbHVkZXMobikpIHFRdWVudGVzKys7CiAgICAgICAgICAgICAgICBpZihhcnJSaWFzLmluY2x1ZGVzKG4pKSBxRnJpYXMrKzsKICAgICAgICAgICAgfSk7CgogICAgICAgICAgICBsZXQgaW1wYXJlcyA9IDUwIC0gcGFyZXM7CiAgICAgICAgICAgIGxldCBzdGF0dXNQYXIgPSAocGFyZXMgPj0gMjIgJiYgcGFyZXMgPD0gMjgpID8gIuKchSBJZGVhbCIgOiAi4pqgIERlc2VxdWlsaWJyYWRvIjsKICAgICAgICAgICAgCiAgICAgICAgICAgIGxldCBsYXVkbyA9IGA8Yj5SZXN1bHRhZG86PC9iPjxicj5gOwogICAgICAgICAgICBsYXVkbyArPSBg4oCiIFBhcmVzL8ONbXBhcmVzOiAke3BhcmVzfS8ke2ltcGFyZXN9ICgke3N0YXR1c1Bhcn0pPGJyPmA7CiAgICAgICAgICAgIGxhdWRvICs9IGDimKogRGV6ZW5hcyBRdWVudGVzIG1hcmNhZGFzOiAke3FRdWVudGVzfTxicj5gOwogICAgICAgICAgICBsYXVkbyArPSBg4oCiIERlemVuYXMgRnJpYXMgbWFyY2FkYXM6ICR7cUZyaWFzfTxicj5gOwogICAgICAgICAgICAKICAgICAgICAgICAgbGV0IHBvbnR1YWNhbyA9IDA7CiAgICAgICAgICAgIGlmKHBhcmVzID49IDIyICYmIHBhcmVzIDw9IDI4KSBwb250dWFjYW8rKzsKICAgICAgICAgICAgaWYocVF1ZW50ZXMgPj0gNSkgcG9udHVhY2FvKys7CgogICAgICAgICAgICBpZihwb250dWFjYW8gPT09IDIpIGxhdWRvICs9IGA8YnI+PHNwYW4gc3R5bGU9ImNvbG9yOiMyZTdkMzI7IGZvbnQtd2VpZ2h0OmJvbGQ7Ij7wn5qAExhdWRvOiBKb2dvIEVYQ0VMRU5URS4gUGFkcsOjbyBGb3J0ZS48L3NwYW4+YDsKICAgICAgICAgICAgZWxzZSBpZihwb250dWFjYW8gPT09IDEpIGxhdWRvICs9IGA8YnI+PHNwYW4gc3R5bGU9ImNvbG9yOiNmNTdjMDA7IGZvbnQtd2VpZ2h0OmJvbGQ7Ij7imZzvuI8gTGF1ZG86IEpvZ28gRVFVSUxJQlJBRE8uPC9zcGFuPmA7CiAgICAgICAgICAgIGVsc2UgbGF1ZG8gKz0gYDxicj48c3BhbiBzdHlsZT0iY29sb3I6I2M2MjgyODsgZm9udC13ZWlnaHQ6Ym9sZDsiPuKdpCBMYXVkbzogSm9nbyBGUkFDTy4gRXhpZ2UgY29ycmXDp8Ojby48L3NwYW4+YDsKCiAgICAgICAgICAgIGNvbnN0IG91dCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdldmFsLW91dHB1dCcpOwogICAgICAgICAgICBvdXQuaW5uZXJIVE1MID0gbGF1ZG87CiAgICAgICAgICAgIG91dC5zdHlsZS5kaXNwbGF5ID0gJ2Jsb2NrJzsKICAgICAgICB9CgogICAgICAgIGxldCBwYWxwaXRlQXR1YWwgPSAiIjsKICAgICAgICBsZXQgZXNwZWxob0F0dWFsID0gIiI7CgogICAgICAgIGZ1bmN0aW9uIGdlcmFySm9nbygpIHsKICAgICAgICAgICAgaWYoIWRhdGFHbG9iYWwgfHwgcGVzb3NHbG9iYWlzLmxlbmd0aCA9PT0gMCkgcmV0dXJuIGFsZXJ0KCJEYWRvcyBuw6NvIGNhcnJlZ2Fkb3MuIik7CiAgICAgICAgICAgIGxldCBwb3AgPSBBcnJheS5mcm9tKHtsZW5ndGg6IDEwMH0sIChfLCBpKSA9PiBpKTsKICAgICAgICAgICAgbGV0IHBlc29zID0gWy4uLnBlc29zR2xvYmFpc107CiAgICAgICAgICAgIGxldCBiaWxoZXRlID0gW107CgogICAgICAgICAgICBmb3IobGV0IGk9MDsgaTw1MDsgaSsrKSB7CiAgICAgICAgICAgICAgICBsZXQgc29tYSA9IHBlc29zLnJlZHVjZSgoYSwgYikgPT4gYSArIGIsIDApOwogICAgICAgICAgICAgICAgbGV0IHJhbmQgPSBNYXRoLnJhbmRvbSgpICogc29tYTsKICAgICAgICAgICAgICAgIGxldCBhY3VtdWxhZG8gPSAwLCBlc2NvbGhpZG9JZHggPSAwOwogICAgICAgICAgICAgICAgZm9yKGxldCAqaj0wOyBqPHBvcC5sZW5ndGg7IGorKykgewogICAgICAgICAgICAgICAgICAgIGFjdW11bGFkbyArPSBwZXNvc1tqXTsKICAgICAgICAgICAgICAgICAgICBpZihyYW5kIDw9IGFjdW11bGFkbykgeyBlc2NvbGhpZG9JZHggPSBqOyBicmVhazsgfQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgYmlsaGV0ZS5wdXNoKHBvcFtlc2NvbGhpZG9JZHhdKTsKICAgICAgICAgICAgICAgIHBvcC5zcGxpY2UoZXNjb2xoaWRvSWR4LCAxKTsKICAgICAgICAgICAgICAgIHBlc29zLnNwbGljZShlc2NvbGhpZG9JZHgsIDEpOwogICAgICAgICAgICB9CiAgICAgICAgICAgIGJpbGhldGUuc29ydCgoYSxiKSA9PiBhIC0gYik7CiAgICAgICAgICAgIAogICAgICAgICAgICBsZXQgcGFyZXMgPSBiaWxoZXRlLmZpbHRlcihuID0+IG4lMj09MCkubGVuZ3RoOwogICAgICAgICAgICBpZihwYXJlcyA8IDIyIHx8IHBhcmVzID4gMjgpIHJldHVybiBnZXJhckpvZ28oKTsKCiAgICAgICAgICAgIGxldCB0b2RvcyA9IG5ldyBTZXQoQXJyYXkuZnJvbSh7bGVuZ3RoOiAxMDB9LCAoXywgaSkgPT4gaSkpOwogICAgICAgICAgICBsZXQgYmlsaGV0ZVNldCA9IG5ldyBTZXQoYmlsaGV0ZSk7CiAgICAgICAgICAgIGxldCBlc3BlbGhvID0gWy4uLnRvZG9zXS5maWx0ZXIoeCA9PiAhYmlsaGV0ZVNldC5oYXEOeCkpLnNvcnQoKGEsYikgPT4gYSAtIGIpOwoKICAgICAgICAgICAgcGFscGl0ZUF0dWFsID0gYmlsaGV0ZS5tYXAoZm9ybWF0WikxLmpvaW4oJyAnKTsKICAgICAgICAgICAgZXNwZWxob0F0dWFsID0gZXNwZWxoby5tYXAoZm9ybWF0WikxLmpvaW4oJyAnKTsKCiAgICAgICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdnZW4tcHJpbmNpcGFsJykuaW5uZXJUZXh0ID0gcGFscGl0ZUF0dWFsOwogICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ2VuLWVzcGVsaG8nKS5pbm5lclRleHQgPSBlc3BlbGhvQXR1YWw7CiAgICAgICAgICAgIAogICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncHJpbnQtYXJlYScpLnN0eWxlLmRpc3BsYXkgPSAnYmxvY2snOwogICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZXhwb3J0LWJ1dHRvbnMnKS5zdHlsZS5kaXNwbGF5ID0gJ2ZsZXgnOwogICAgICAgIH0KCgogICAgICAgIGZ1bmN0aW9uIGVudmlhcldoYXRzQXBwVHh0KCkgewogICAgICAgICAgICBsZXQgdGV4dG8gPSBg8J+SpSAqTG90b21hbmlhIFByZWRpdGl2YSpcblxu8J+OryAqQXBvc3RhIFByaW5jaXBhbDoqXG4ke3BhbHBpdGVBdHVhbH1cblxufJ+bocKgICpFc3BlbGhvOipcbiR7ZXNwZWxob0F0dWFsfWA7CiAgICAgICAgICAgIHdpbmRvdy5vcGVuKGBodHRwczovL2FwaS53aGF0c2FwcC5jb20vc2VuZD90ZXh0PSR7ZW5jb2RlVVJJQ29tcG9uZW50KHRleHRvKX1gLCAnX2JsYW5rJyk7CiAgICAgICAgfQoKICAgICAgICBmdW5jdGlvbiBlbnZpYXJXaGF0c0FwcEltZygpIHsKICAgICAgICAgICAgY29uc3QgcHJpbnRBcmVhID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3ByaW50LWFyZWEnKTsKICAgICAgICAgICAgbGV0IG9sZEJnID0gcHJpbnRBcmVhLnN0eWxlLmJhY2tncm91bmQ7CiAgICAgICAgICAgIHByaW50QXJlYS5zdHlsZS5iYWNrZ3JvdW5kID0gIiNmZmZmZmYiOwogICAgICAgICAgICBodG1sMmNhbnZhcyhwcmludEFyZWEsIHtzY2FsZTogMn0pLnRoZW4oY2FudmFzID0+IHsKICAgICAgICAgICAgICAgIHByaW50QXJlYS5zdHlsZS5iYWNrZ3JvdW5kID0gb2xkQmc7IAogICAgICAgICAgICAgICAgY2FudmFzLnRvQmxvYihibG9iID0+IHsKICAgICAgICAgICAgICAgICAgICBjb25zdCBmaWxlID0gbmV3IEZpbGUoW2Jsb2JdLCAnbG90b21hbmlhLnBuZycsIHsgdHlwZTogJ2ltYWdlL3BuZycgfSk7CiAgICAgICAgICAgICAgICAgICAgaWYgKG5hdmlnYXRvci5zaGFyZSAmJiBuYXZpZ2F0b3IuY2FuU2hhcmUgJiYgbmF2aWdhdG9yLmNhblNoYXJlKHsgZmlsZXM6IFtmaWxlXSB9KSkgewogICAgICAgICAgICAgICAgICAgICAgICBuYXZpZ2F0b3Iuc2hhcmUoeyB0aXRsZTogJ0xvdG9tYW5pYScsIHRleHQ6ICdNZXUgam9nbzpnLCBmaWxlczogW2ZpbGVdIH0pLmNhdGNoKGUgPT4gY29uc29sZS5sb2coZSkpOwogICAgICAgICAgICAgICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgICAgICAgICAgICAgIGxldCBhID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnYScpOwogICAgICAgICAgICAgICAgICAgICAgICBhLmhyZWYgPSBVUkwuY3JlYXRlT2JqZWN0VVJMKGJsb2IpOwogICAgICAgICAgICAgICAgICAgICAgICBhLmRvd25sb2FkID0gJ21ldV9qb2dvLnBuZyc7CiAgICAgICAgICAgICAgICAgICAgICAgIGEuY2xpY2soKTsKICAgICAgICAgICAgICAgICAgICAgICAgYWxlcnQoIkltYWdlbSBzYWx2YSEgRW52aWUgcGVsbyBXaGF0c0FwcC4iKTsKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9KTsKICAgICAgICAgICAgfSk7CiAgICAgICAgfQogICAgICAgIGZ1bmN0aW9uIGZvcm1hdFoobikgeyByZXR1cm4gbiA8IDEwID8gJzAnK24gOiBuOyB9'))
     </script>
 </body>
 </html>
