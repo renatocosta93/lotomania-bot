@@ -14,13 +14,33 @@ def obter_ultimo_resultado():
         url = "https://servicebus2.caixa.gov.br/portaldeloterias/api/lotomania/"
         response = requests.get(url, headers=headers, verify=False, timeout=15)
         dados = response.json()
+        
+        # Corrige a busca exata de ganhadores na API da Caixa
+        ganhadores = 0
+        rateio = dados.get('listaRateioPremio')
+        if rateio and isinstance(rateio, list) and len(rateio) > 0:
+            ganhadores = rateio[0].get('numeroDeGanhadores', 0)
+            
+        # Puxa a data e descobre o dia da semana do proximo sorteio
+        data_prox_str = dados.get('dataProximoConcurso', '')
+        dia_semana_prox = ""
+        if data_prox_str:
+            try:
+                dias = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"]
+                obj_data = datetime.strptime(data_prox_str, "%d/%m/%Y")
+                dia_semana_prox = dias[obj_data.weekday()]
+            except:
+                pass
+                
         return {
             "concurso": dados['numero'],
             "data": dados['dataApuracao'],
             "dezenas": sorted([int(d) for d in dados['listaDezenas']]),
             "acumulou": dados.get('acumulado', False),
-            "ganhadores": dados.get('quantidadeGanhadores', 0),
-            "valor_premio": dados.get('valorEstimadoProximoConcurso', 0)
+            "ganhadores": ganhadores,
+            "valor_premio": dados.get('valorEstimadoProximoConcurso', 0),
+            "data_proximo": data_prox_str,
+            "dia_semana_proximo": dia_semana_prox
         }
     except Exception as e:
         print("Erro na API:", e)
@@ -81,7 +101,6 @@ def apagar_mensagem_anterior(message_id):
 def enviar_telegram(msg, dados):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     res = requests.post(url, json={'chat_id': TELEGRAM_CHAT_ID, 'text': msg, 'parse_mode': 'Markdown', 'disable_web_page_preview': True})
-    
     if res.status_code == 200:
         novo_id = res.json().get("result", {}).get("message_id")
         if novo_id:
@@ -89,21 +108,12 @@ def enviar_telegram(msg, dados):
             dados["last_message_id"] = novo_id
 
 def formatar_moeda(valor):
-    try:
-        return f"R$ {float(valor):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    except:
-        return "R$ 0,00"
+    try: return f"R$ {float(valor):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    except: return "R$ 0,00"
 
 def executar():
     dados = carregar_dados()
     novo = obter_ultimo_resultado()
-    
-    concurso_base = "Desconhecido"
-    data_sorteio = "Data Desconhecida"
-    premio = "R$ 0,00"
-    ganhadores = 0
-    status_premio = "Desconhecido"
-    prox_concurso = "Desconhecido"
     
     if novo and (not dados['concursos'] or dados['concursos'][0]['concurso'] != novo['concurso']):
         dados['concursos'].insert(0, novo)
@@ -112,47 +122,41 @@ def executar():
             if d in dados['ciclo_atual']: dados['ciclo_atual'].remove(d)
         if not dados['ciclo_atual']: dados['ciclo_atual'] = list(range(100))
         
-    if dados['concursos']:
-        ultimo_conc = dados['concursos'][0]
-        concurso_base = ultimo_conc['concurso']
-        data_sorteio = ultimo_conc['data']
-        ultimas_dezenas = ultimo_conc['dezenas']
-        ganhadores = ultimo_conc.get('ganhadores', 0)
-        premio = formatar_moeda(ultimo_conc.get('valor_premio', 0))
-        prox_concurso = int(concurso_base) + 1
+    salvar_dados(dados)
+    
+    if not dados['concursos']: return 
         
-        if ultimo_conc.get('acumulou'):
-            status_premio = "🚨 ACUMULOU!"
-        else:
-            status_premio = f"🎉 {ganhadores} Ganhador(es)"
-    else:
-        ultimas_dezenas = []
+    ultimo_conc = dados['concursos'][0]
+    concurso_base = ultimo_conc['concurso']
+    data_sorteio = ultimo_conc['data']
+    ultimas_dezenas = ultimo_conc['dezenas']
+    ganhadores = ultimo_conc.get('ganhadores', 0)
+    premio = formatar_moeda(ultimo_conc.get('valor_premio', 0))
+    prox_concurso = int(concurso_base) + 1
+    
+    data_prox = ultimo_conc.get('data_proximo', 'Data Indefinida')
+    dia_semana = ultimo_conc.get('dia_semana_proximo', '')
+    str_data_prox = f"{data_prox}, {dia_semana}" if dia_semana else data_prox
+    
+    if ultimo_conc.get('acumulou'): status_premio = "🚨 ACUMULOU!"
+    else: status_premio = f"🎉 {ganhadores} Ganhador(es)"
 
     pesos = calcular_pesos(dados)
     t, bilhete = 0, None
     while t < 500:
         c = gerar_palpite(pesos)
-        if validar_bilhete(c): 
-            bilhete = c; break
+        if validar_bilhete(c): bilhete = c; break
         t+=1
 
-    if not bilhete:
-        enviar_telegram("⚠️ *Alerta:* Falha ao gerar palpite seguro.", dados)
-        return
+    if not bilhete: return enviar_telegram("⚠️ *Alerta:* Falha ao gerar palpite.", dados)
 
     espelho = sorted(list(set(range(100)) - set(bilhete)))
     
-    # Análises para o texto
     freq = Counter()
     for conc in dados['concursos']: freq.update(conc['dezenas'])
     ordem = [item[0] for item in freq.most_common()]
-    quente = ordem[0] if ordem else "N/A"
-    fria = ordem[-1] if ordem else "N/A"
-    
-    faltam_ciclo = dados.get('ciclo_atual', [])
-    str_ciclo = ", ".join([f"{n:02d}" for n in faltam_ciclo[:10]])
-    if len(faltam_ciclo) > 10:
-        str_ciclo += "..."
+    quente = ordem[0] if ordem else 0
+    fria = ordem[-1] if ordem else 0
         
     str_prin = ' '.join(f'{n:02d}' for n in bilhete)
     str_esp = ' '.join(f'{n:02d}' for n in espelho)
@@ -164,15 +168,14 @@ def executar():
            f"🔢 *Dezenas:* {str_ult}\n"
            f"👤 *Ganhadores (20 pts):* {status_premio}\n"
            f"💰 *Estimativa Próximo:* {premio}\n\n"
-           f"🔮 *Próximo Sorteio:* {prox_concurso}\n\n"
+           f"🔮 *Próximo Sorteio:* {prox_concurso} ({str_data_prox})\n\n"
            f"🤖 *Análise do Assistente Preditivo:*\n"
            f"Aqui vai a minha leitura cruzando as estatísticas dos 50 jogos:\n\n"
            f"• *Para Fixar:* A dezena {quente:02d} está muito quente. A chance matemática dela continuar saindo hoje é altíssima.\n"
-           f"• *Ciclo Atual:* Faltam as dezenas {str_ciclo}. O foco do gerador foi fechar esse ciclo.\n"
            f"• *Para Evitar:* A dezena {fria:02d} atingiu seu limite de atraso (está fria demais). O algoritmo minimizou a chance dela.\n\n"
            f"🎯 *Palpite Principal (50 Dezenas):*\n`{str_prin}`\n\n"
            f"🛡️ *Aposta Espelho (50 Dezenas):*\n`{str_esp}`\n"
-           f"_(Gerado cruzando o ciclo, fixando atrasos e balanceando quadrantes)_\n\n"
+           f"_(Gerado cruzando atrasos e balanceando quadrantes)_\n\n"
            f"✅ *Base:* 50 Jogos\n"
            f"🔗 *Seu Painel:* [Clique Aqui]({LINK_PAINEL})\n"
            f"🏦 *Fonte Oficial:* Caixa Econômica")
