@@ -3,169 +3,378 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Lotomania Premium</title>
+    <title>Painel Lotomania Premium - Fase 3</title>
+    <!-- Biblioteca para gerar imagem do jogo (Print invisível) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* CSS Premium e Moderno */
-        :root { --primary: #f37021; --bg: #f4f7f6; --card-bg: #ffffff; --text: #333; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; }
-        .container { max-width: 900px; margin: 0 auto; }
+        :root { --primary: #f37021; --bg: #f4f7f6; --card-bg: #ffffff; --text: #333; --border: #e0e0e0; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; }
+        .container { max-width: 800px; margin: 0 auto; }
         
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { color: var(--primary); margin: 0; font-size: 1.8rem; }
-        .last-update { font-size: 0.9rem; color: #666; margin-top: 5px; background: #e9ecef; display: inline-block; padding: 4px 12px; border-radius: 20px;}
+        /* Cabeçalho */
+        .header { text-align: center; margin-bottom: 15px; }
+        .header h1 { color: var(--primary); margin: 0; font-size: 1.6rem; }
+        .last-update { font-size: 0.8rem; color: #666; background: #e9ecef; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-top: 5px;}
         
-        /* Estilo dos Cards Flutuantes */
-        .card { background: var(--card-bg); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); border-top: 4px solid var(--primary); }
-        .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; color: #2c3e50; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px;}
+        /* Cards */
+        .card { background: var(--card-bg); border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
+        .card-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; color: #2c3e50; border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; justify-content: space-between;}
         
-        /* Bolinhas do Último Sorteio */
-        .balls-container { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 15px 0; }
-        .ball { width: 36px; height: 36px; background: linear-gradient(135deg, #f37021, #d35400); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; box-shadow: 0 3px 5px rgba(0,0,0,0.2); }
+        /* Bolinhas */
+        .balls-container { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
+        .ball { width: 32px; height: 32px; background: linear-gradient(135deg, #f37021, #d35400); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         
-        /* Alertas de Prêmio */
-        .prize-info { text-align: center; font-size: 1.1rem; font-weight: bold; padding: 12px; border-radius: 8px; background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;}
-        .prize-acumulado { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2;}
+        /* Prêmio */
+        .prize-info { text-align: center; font-size: 0.9rem; font-weight: bold; padding: 8px; border-radius: 6px; background: #e8f5e9; color: #2e7d32; }
+        .prize-acumulado { background: #ffebee; color: #c62828; }
         
-        /* Mapa de Calor 10x10 */
-        .heatmap-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; max-width: 600px; margin: 0 auto; }
-        .hm-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 6px; font-size: 0.95rem; border: 1px solid rgba(0,0,0,0.05); }
+        /* Mapa de Calor */
+        .heatmap-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; max-width: 100%; margin: 10px auto; }
+        .hm-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 4px; font-size: 0.85rem; }
         .hm-frio { background: #bbdefb; color: #0d47a1; }
-        .hm-regular { background: #f5f5f5; color: #616161; }
+        .hm-regular { background: #f5f5f5; color: #616161; border: 1px solid #eee;}
         .hm-quente { background: #ffcdd2; color: #b71c1c; }
         .hm-extremo { background: #d32f2f; color: white; }
+        .hm-legenda { font-size: 0.75rem; text-align: center; margin-bottom: 5px; }
+
+        /* Grids de Estatísticas */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .stat-box { background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid #e9ecef; font-size: 0.85rem;}
+        .stat-box h4 { margin: 0 0 5px 0; color: #444; font-size: 0.9rem;}
+        .stat-list { font-family: monospace; font-size: 0.95rem; font-weight: bold; color: #222; word-break: break-word;}
+        .alert-text { color: #d32f2f; font-weight: bold; }
         
-        /* Grid Duplo para Ciclo e Quentes */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        @media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr; } }
-        .stat-box { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef; }
-        .stat-box h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.1rem;}
-        .stat-list { font-family: monospace; font-size: 1.1rem; word-break: break-word; line-height: 1.6; color: #333; font-weight: bold;}
-        
-        footer { text-align: center; margin-top: 30px; padding: 20px; font-size: 0.85rem; color: #7f8c8d; border-top: 1px solid #ddd; line-height: 1.5;}
+        /* Inputs e Botões */
+        textarea { width: 100%; height: 60px; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-family: monospace; font-size: 0.9rem; box-sizing: border-box; margin-bottom: 10px; resize: none;}
+        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        button:active { background: #d35400; }
+        .btn-green { background: #25D366; }
+        .btn-blue { background: #2196F3; }
+        .btn-half { width: 48%; display: inline-flex; }
+        .btn-row { display: flex; justify-content: space-between; }
+
+        /* Output do Gerador */
+        .game-output { background: #fffde7; padding: 15px; border-radius: 8px; border: 1px dashed #fbc02d; margin-top: 15px; display: none; }
+        .game-numbers { font-family: monospace; font-size: 1.1rem; font-weight: bold; color: #333; text-align: center; letter-spacing: 2px; line-height: 1.5; margin: 10px 0;}
+        .eval-result { background: #f1f8e9; padding: 10px; border-left: 4px solid #8bc34a; font-size: 0.85rem; margin-top: 10px; display: none;}
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Cabeçalho -->
         <div class="header">
-            <h1>🎰 Painel Lotomania Premium</h1>
-            <div class="last-update" id="update-time">Buscando atualizações na base...</div>
+            <h1>🎰 Lotomania Pro</h1>
+            <div class="last-update" id="update-time">Sincronizando dados...</div>
         </div>
 
         <!-- Card: Último Sorteio -->
         <div class="card">
             <div class="card-title">
                 <span id="concurso-title">Último Sorteio</span>
-                <span id="concurso-date" style="font-size: 0.9rem; font-weight: normal; color: #7f8c8d;"></span>
+                <span id="concurso-date" style="font-size: 0.85rem; font-weight: normal; color: #7f8c8d;"></span>
             </div>
             <div class="balls-container" id="last-balls"></div>
-            <div id="prize-info" class="prize-info">Carregando dados da Caixa...</div>
+            <div id="prize-info" class="prize-info">Carregando...</div>
         </div>
 
-        <!-- Card: Mapa de Calor -->
+        <!-- Card: Mapa de Calor e Estatísticas -->
         <div class="card">
-            <div class="card-title" style="justify-content: center;">🔥 Mapa de Calor (50 Concursos)</div>
-            <div style="text-align: center; font-size: 0.85rem; margin-bottom: 15px;">
+            <div class="card-title">🔥 Mapa de Calor & Tendências</div>
+            <div class="hm-legenda">
                 <span style="color:#d32f2f; font-weight:bold;">Vermelho (Quentes)</span> | 
                 <span style="color:#616161; font-weight:bold;">Cinza (Normais)</span> | 
                 <span style="color:#0d47a1; font-weight:bold;">Azul (Frias)</span>
             </div>
             <div class="heatmap-grid" id="heatmap"></div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <h4>🔥 Top 10 Quentes</h4>
+                    <div class="stat-list" id="txt-quentes">...</div>
+                </div>
+                <div class="stat-box">
+                    <h4>❄️ Top 10 Frias</h4>
+                    <div class="stat-list" id="txt-frias">...</div>
+                </div>
+                <div class="stat-box">
+                    <h4>🚨 Máximo Atraso (Vai Estourar)</h4>
+                    <div class="stat-list alert-text" id="txt-atraso">...</div>
+                </div>
+                <div class="stat-box">
+                    <h4>📈 Máxima Sequência (Pode Falhar)</h4>
+                    <div class="stat-list alert-text" id="txt-sequencia">...</div>
+                </div>
+            </div>
         </div>
 
-        <!-- Cards: Ciclo e Dezenas Quentes -->
-        <div class="stats-grid">
-            <div class="card stat-box" style="margin-bottom: 0; border-top: none;">
-                <h4>🔄 Ciclo Atual</h4>
-                <div style="font-size: 0.85rem; color: #666; margin-bottom: 8px;">Dezenas que faltam sair:</div>
-                <div class="stat-list" id="ciclo-list">Carregando...</div>
-            </div>
-            <div class="card stat-box" style="margin-bottom: 0; border-top: none;">
-                <h4>📈 Top 10 Quentes</h4>
-                <div style="font-size: 0.85rem; color: #666; margin-bottom: 8px;">As mais sorteadas nos últimos 50:</div>
-                <div class="stat-list" id="quentes-list">Carregando...</div>
-            </div>
+        <!-- Card: Avaliador de Jogos -->
+        <div class="card">
+            <div class="card-title">⚖️ Avaliador de Jogo</div>
+            <p style="font-size: 0.8rem; margin: 0 0 10px 0; color: #666;">Cole suas 50 dezenas abaixo separadas por espaço para ver a força do seu jogo.</p>
+            <textarea id="eval-input" placeholder="Ex: 01 05 12 18... (50 dezenas)"></textarea>
+            <button class="btn-blue" onclick="avaliarJogo()">Avaliar Jogo</button>
+            <div id="eval-output" class="eval-result"></div>
         </div>
 
-        <!-- Rodapé / Instruções -->
-        <footer>
-            <strong>Como este painel funciona?</strong><br>
-            Este sistema consolida os últimos 50 resultados oficiais da Lotomania. O algoritmo analisa as frequências (Mapa de Calor), identifica atrasos (Dezenas Frias) e monitora o fechamento de ciclos para gerar palpites de alta precisão matemática, que são enviados automaticamente para o seu Telegram.<br><br>
-            <em>Desenvolvido com integração direta à API da Caixa Econômica Federal.</em>
-        </footer>
+        <!-- Card: Gerador Inteligente e Exportação -->
+        <div class="card">
+            <div class="card-title">🤖 Gerador Inteligente</div>
+            <p style="font-size: 0.8rem; margin: 0 0 10px 0; color: #666;">O algoritmo cruza os atrasos, quentes e ciclo atual para montar o jogo ideal.</p>
+            <button onclick="gerarJogo()">🎯 Gerar Jogo Ideal</button>
+            
+            <div id="print-area" class="game-output">
+                <div style="text-align: center; font-weight: bold; color: var(--primary); margin-bottom: 5px;">Aposta Principal</div>
+                <div class="game-numbers" id="gen-principal"></div>
+                <hr style="border: 0; border-top: 1px dashed #ccc; margin: 15px 0;">
+                <div style="text-align: center; font-weight: bold; color: #2196F3; margin-bottom: 5px;">Aposta Espelho</div>
+                <div class="game-numbers" id="gen-espelho"></div>
+                <div style="text-align: center; font-size: 0.75rem; color: #888; margin-top: 10px;">Gerado por IA - Baseado nos últimos 50 concursos</div>
+            </div>
+
+            <div id="export-buttons" class="btn-row" style="display: none; margin-top: 10px;">
+                <button class="btn-green btn-half" onclick="enviarWhatsAppTxt()">💬 Enviar Texto</button>
+                <button class="btn-blue btn-half" onclick="enviarWhatsAppImg()">📸 Enviar Imagem</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Scripts de Lógica -->
     <script>
-        // O cache buster (?t=) garante que o celular sempre baixe a versão mais recente do JSON
+        // Variáveis globais para armazenar dados da API
+        let dataGlobal = null;
+        let arrQuentes = [];
+        let arrFrias = [];
+        let cicloAtual = [];
+        let pesosGlobais = [];
+
+        // 1. CARREGAR DADOS JSON
         fetch('data.json?t=' + new Date().getTime())
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
-            // 1. Atualizar Hora
-            document.getElementById('update-time').innerHTML = `Atualizado em: <b>${data.ultima_atualizacao || 'Hoje'}</b>`;
+            dataGlobal = data;
+            document.getElementById('update-time').innerHTML = `Sincronizado: <b>${data.ultima_atualizacao || 'Hoje'}</b>`;
             
-            // 2. Montar Último Sorteio
             if(data.concursos && data.concursos.length > 0) {
-                const ultimo = data.concursos[0];
-                document.getElementById('concurso-title').innerText = `🏆 Concurso ${ultimo.concurso}`;
-                document.getElementById('concurso-date').innerText = ultimo.data;
-                
-                const ballsDiv = document.getElementById('last-balls');
-                ballsDiv.innerHTML = ultimo.dezenas.map(d => `<div class="ball">${d.toString().padStart(2, '0')}</div>`).join('');
-                
-                const prizeDiv = document.getElementById('prize-info');
-                if (ultimo.acumulou) {
-                    prizeDiv.className = 'prize-info prize-acumulado';
-                    prizeDiv.innerText = `🚨 ACUMULOU! Estimativa do próximo: ${formatCurrency(ultimo.valor_premio)}`;
-                } else {
-                    prizeDiv.className = 'prize-info';
-                    prizeDiv.innerText = `🎉 ${ultimo.ganhadores} Ganhador(es)! Estimativa do próximo: ${formatCurrency(ultimo.valor_premio)}`;
-                }
+                renderizarUltimoSorteio(data.concursos[0]);
+                processarEstatisticas(data);
             }
+        }).catch(err => document.getElementById('update-time').innerText = "Erro de conexão.");
 
-            // 3. Processar Frequências
-            let frequencias = new Array(100).fill(0);
-            if(data.concursos) {
-                data.concursos.forEach(conc => {
-                    conc.dezenas.forEach(dez => frequencias[dez]++);
-                });
+        function renderizarUltimoSorteio(ultimo) {
+            document.getElementById('concurso-title').innerText = `🏆 Conc. ${ultimo.concurso}`;
+            document.getElementById('concurso-date').innerText = ultimo.data;
+            document.getElementById('last-balls').innerHTML = ultimo.dezenas.map(d => `<div class="ball">${formatZ(d)}</div>`).join('');
+            
+            const pDiv = document.getElementById('prize-info');
+            const vPremio = "R$ " + parseFloat(ultimo.valor_premio || 0).toLocaleString('pt-BR', {minimumFractionDigits:2});
+            if(ultimo.acumulou) {
+                pDiv.className = 'prize-info prize-acumulado';
+                pDiv.innerText = `🚨 ACUMULOU! Próximo: ${vPremio}`;
+            } else {
+                pDiv.innerText = `🎉 ${ultimo.ganhadores} Ganhadores! Próximo: ${vPremio}`;
             }
-
-            // 4. Desenhar Mapa de Calor 10x10
-            const heatmap = document.getElementById('heatmap');
-            let heatmapHtml = '';
-            for (let i = 0; i < 100; i++) {
-                let f = frequencias[i];
-                let cssClass = 'hm-regular'; // Padrão Cinza
-                if (f >= 7) cssClass = 'hm-extremo'; // Vermelho forte
-                else if (f >= 5) cssClass = 'hm-quente'; // Rosa/Vermelho claro
-                else if (f <= 2) cssClass = 'hm-frio'; // Azul claro
-                
-                heatmapHtml += `<div class="hm-cell ${cssClass}">${i.toString().padStart(2, '0')}</div>`;
-            }
-            heatmap.innerHTML = heatmapHtml;
-
-            // 5. Dezenas do Ciclo
-            const ciclo = data.ciclo_atual || [];
-            document.getElementById('ciclo-list').innerText = ciclo.length > 0 ? ciclo.map(d => d.toString().padStart(2, '0')).join(' - ') : "🎉 CICLO FECHADO!";
-
-            // 6. Top 10 Quentes
-            let objFreq = [];
-            for(let i=0; i<100; i++) objFreq.push({dez: i, qtd: frequencias[i]});
-            objFreq.sort((a,b) => b.qtd - a.qtd); // Ordena da que mais saiu para a que menos saiu
-            const top10 = objFreq.slice(0, 10).map(x => x.dez.toString().padStart(2, '0')).join(' - ');
-            document.getElementById('quentes-list').innerText = top10;
-        })
-        .catch(err => {
-            console.error(err);
-            document.getElementById('update-time').innerText = "Erro ao ler o banco de dados oficial.";
-        });
-
-        // Função para formatar Reais (R$)
-        function formatCurrency(value) {
-            if(!value) return "R$ 0,00";
-            return "R$ " + parseFloat(value).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
+
+        function processarEstatisticas(data) {
+            const concursos = data.concursos;
+            let freq = new Array(100).fill(0);
+            let atrasos = new Array(100).fill(-1);
+            let seqs = new Array(100).fill(0);
+            
+            // Frequencias e Sequências/Atrasos
+            for(let d = 0; d < 100; d++) {
+                let atrasoCount = 0;
+                let seqCount = 0;
+                let achouSorteio = false;
+                let falhou = false;
+
+                for(let i = 0; i < concursos.length; i++) {
+                    const conc = concursos[i].dezenas;
+                    if(conc.includes(d)) {
+                        freq[d]++;
+                        if(!achouSorteio) {
+                            achouSorteio = true;
+                            atrasoCount = i; // Sorteios atrás
+                        }
+                        if(!falhou) seqCount++; // Continua contando a sequencia atual
+                    } else {
+                        if(achouSorteio) falhou = true;
+                    }
+                }
+                atrasos[d] = achouSorteio ? atrasoCount : 50;
+                seqs[d] = seqCount;
+            }
+
+            // Pintar Mapa de Calor
+            let hmHtml = '';
+            for(let i=0; i<100; i++) {
+                let f = freq[i];
+                let css = 'hm-regular';
+                if(f >= 7) css = 'hm-extremo';
+                else if(f >= 5) css = 'hm-quente';
+                else if(f <= 2) css = 'hm-frio';
+                hmHtml += `<div class="hm-cell ${css}">${formatZ(i)}</div>`;
+            }
+            document.getElementById('heatmap').innerHTML = hmHtml;
+
+            // Ordenar Quentes e Frias
+            let objs = [];
+            for(let i=0; i<100; i++) objs.push({d: i, f: freq[i], a: atrasos[i], s: seqs[i]});
+            
+            objs.sort((a,b) => b.f - a.f); // Decrescente
+            arrQuentes = objs.slice(0,15).map(x => x.d);
+            arrFrias = objs.slice(-15).map(x => x.d);
+            
+            document.getElementById('txt-quentes').innerText = objs.slice(0,10).map(x => formatZ(x.d)).join(' ');
+            document.getElementById('txt-frias').innerText = objs.slice(-10).map(x => formatZ(x.d)).join(' ');
+
+            // Maior Atraso (Vai Estourar) e Maior Sequência (Pode Falhar)
+            objs.sort((a,b) => b.a - a.a);
+            let topAtraso = objs[0];
+            document.getElementById('txt-atraso').innerText = `Dezena ${formatZ(topAtraso.d)} (${topAtraso.a} jogos atrasada)`;
+
+            objs.sort((a,b) => b.s - a.s);
+            let topSeq = objs[0];
+            document.getElementById('txt-sequencia').innerText = `Dezena ${formatZ(topSeq.d)} (Saiu ${topSeq.s} jogos seguidos)`;
+
+            // Configurar pesos para o Gerador
+            cicloAtual = data.ciclo_atual || [];
+            pesosGlobais = new Array(100).fill(2);
+            for(let i=0; i<100; i++) {
+                if(arrQuentes.includes(i)) pesosGlobais[i] = 3;
+                if(arrFrias.includes(i)) pesosGlobais[i] = 1;
+                if(cicloAtual.includes(i)) pesosGlobais[i] = 5;
+            }
+        }
+
+        // 2. AVALIADOR DE JOGO
+        function avaliarJogo() {
+            if(!dataGlobal) return alert("Aguarde o carregamento dos dados.");
+            const input = document.getElementById('eval-input').value;
+            // Extrai números
+            let numeros = input.match(/\d+/g);
+            if(!numeros) return alert("Insira dezenas válidas.");
+            numeros = [...new Set(numeros.map(n => parseInt(n, 10)))].filter(n => n >= 0 && n <= 99);
+            
+            if(numeros.length !== 50) {
+                return alert(`Um jogo da Lotomania exige exatamente 50 dezenas. Você inseriu ${numeros.length}.`);
+            }
+
+            let pares = 0, qQuentes = 0, qFrias = 0, qCiclo = 0;
+            numeros.forEach(n => {
+                if(n % 2 === 0) pares++;
+                if(arrQuentes.includes(n)) qQuentes++;
+                if(arrFrias.includes(n)) qFrias++;
+                if(cicloAtual.includes(n)) qCiclo++;
+            });
+
+            let impares = 50 - pares;
+            let statusPar = (pares >= 22 && pares <= 28) ? "✅ Ideal" : "⚠️ Desequilibrado";
+            
+            let laudo = `<b>Resultado da Avaliação:</b><br>`;
+            laudo += `• Pares/Ímpares: ${pares}/${impares} (${statusPar})<br>`;
+            laudo += `• Dezenas Quentes marcadas: ${qQuentes}<br>`;
+            laudo += `• Dezenas Frias marcadas: ${qFrias}<br>`;
+            laudo += `• Dezenas do Ciclo cobertas: ${qCiclo} de ${cicloAtual.length}<br>`;
+            
+            let pontuacao = 0;
+            if(pares >= 22 && pares <= 28) pontuacao++;
+            if(qQuentes >= 5) pontuacao++;
+            if(qCiclo >= Math.min(5, cicloAtual.length)) pontuacao++;
+
+            if(pontuacao === 3) laudo += `<br><span style="color:#2e7d32; font-weight:bold;">🚀 Laudo: Jogo EXCELENTE. Padrão Forte.</span>`;
+            else if(pontuacao === 2) laudo += `<br><span style="color:#f57c00; font-weight:bold;">⚖️ Laudo: Jogo EQUILIBRADO.</span>`;
+            else laudo += `<br><span style="color:#c62828; font-weight:bold;">❌ Laudo: Jogo FRACO. Exige correção.</span>`;
+
+            const out = document.getElementById('eval-output');
+            out.innerHTML = laudo;
+            out.style.display = 'block';
+        }
+
+        // 3. GERADOR INTELIGENTE
+        let palpiteAtual = "";
+        let espelhoAtual = "";
+
+        function gerarJogo() {
+            if(!dataGlobal || pesosGlobais.length === 0) return alert("Dados não carregados.");
+            
+            let pop = Array.from({length: 100}, (_, i) => i);
+            let pesos = [...pesosGlobais];
+            let bilhete = [];
+
+            // Sorteio ponderado sem repetição
+            for(let i=0; i<50; i++) {
+                let soma = pesos.reduce((a, b) => a + b, 0);
+                let rand = Math.random() * soma;
+                let acumulado = 0;
+                let escolhidoIdx = 0;
+                
+                for(let j=0; j<pop.length; j++) {
+                    acumulado += pesos[j];
+                    if(rand <= acumulado) { escolhidoIdx = j; break; }
+                }
+                
+                bilhete.push(pop[escolhidoIdx]);
+                pop.splice(escolhidoIdx, 1);
+                pesos.splice(escolhidoIdx, 1);
+            }
+
+            bilhete.sort((a,b) => a - b);
+            
+            // Validar paridade rapidamente (força entre 22 e 28 pares)
+            let pares = bilhete.filter(n => n%2===0).length;
+            if(pares < 22 || pares > 28) return gerarJogo(); // Recusa e gera de novo internamente
+
+            let todos = new Set(Array.from({length: 100}, (_, i) => i));
+            let bilheteSet = new Set(bilhete);
+            let espelho = [...todos].filter(x => !bilheteSet.has(x)).sort((a,b) => a - b);
+
+            palpiteAtual = bilhete.map(formatZ).join(' ');
+            espelhoAtual = espelho.map(formatZ).join(' ');
+
+            document.getElementById('gen-principal').innerText = palpiteAtual;
+            document.getElementById('gen-espelho').innerText = espelhoAtual;
+            
+            document.getElementById('print-area').style.display = 'block';
+            document.getElementById('export-buttons').style.display = 'flex';
+        }
+
+        // 4. EXPORTAÇÃO WHATSAPP
+        function enviarWhatsAppTxt() {
+            let texto = `🤖 *Lotomania Preditiva*\n\n🎯 *Aposta Principal:*\n${palpiteAtual}\n\n🛡️ *Espelho:*\n${espelhoAtual}`;
+            let url = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
+            window.open(url, '_blank');
+        }
+
+        function enviarWhatsAppImg() {
+            const printArea = document.getElementById('print-area');
+            // Altera temporariamente a cor de fundo para o print ficar bonito
+            let oldBg = printArea.style.background;
+            printArea.style.background = "#ffffff";
+            
+            html2canvas(printArea, {scale: 2}).then(canvas => {
+                printArea.style.background = oldBg; // restaura
+                
+                canvas.toBlob(blob => {
+                    const file = new File([blob], 'lotomania.png', { type: 'image/png' });
+                    // Tenta usar o Web Share API nativo do celular
+                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator.share({
+                            title: 'Jogo Lotomania',
+                            text: 'Meu jogo gerado pela Inteligência Artificial:',
+                            files: [file]
+                        }).catch(err => console.log('Compartilhamento cancelado', err));
+                    } else {
+                        // Fallback: Baixa a imagem se o celular não suportar
+                        let a = document.createElement('a');
+                        a.href = URL.createObjectURL(blob);
+                        a.download = 'meu_jogo_lotomania.png';
+                        a.click();
+                        alert("A imagem foi baixada. Abra sua galeria e envie no WhatsApp!");
+                    }
+                });
+            });
+        }
+
+        function formatZ(n) { return n < 10 ? '0'+n : n; }
     </script>
 </body>
 </html>
