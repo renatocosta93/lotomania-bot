@@ -4,31 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Lotomania Premium - Fase 3</title>
-    <!-- Biblioteca para gerar imagem do jogo (Print invisível) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root { --primary: #f37021; --bg: #f4f7f6; --card-bg: #ffffff; --text: #333; --border: #e0e0e0; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; }
         .container { max-width: 800px; margin: 0 auto; }
         
-        /* Cabeçalho */
         .header { text-align: center; margin-bottom: 15px; }
         .header h1 { color: var(--primary); margin: 0; font-size: 1.6rem; }
         .last-update { font-size: 0.8rem; color: #666; background: #e9ecef; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-top: 5px;}
         
-        /* Cards */
         .card { background: var(--card-bg); border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
         .card-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; color: #2c3e50; border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; justify-content: space-between;}
         
-        /* Bolinhas */
         .balls-container { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
         .ball { width: 32px; height: 32px; background: linear-gradient(135deg, #f37021, #d35400); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         
-        /* Prêmio */
-        .prize-info { text-align: center; font-size: 0.9rem; font-weight: bold; padding: 8px; border-radius: 6px; background: #e8f5e9; color: #2e7d32; }
+        .prize-info { text-align: center; font-size: 0.9rem; font-weight: bold; padding: 8px; border-radius: 6px; background: #e8f5e9; color: #2e7d32; margin-bottom: 8px;}
         .prize-acumulado { background: #ffebee; color: #c62828; }
         
-        /* Mapa de Calor */
         .heatmap-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; max-width: 100%; margin: 10px auto; }
         .hm-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 4px; font-size: 0.85rem; }
         .hm-frio { background: #bbdefb; color: #0d47a1; }
@@ -37,14 +31,12 @@
         .hm-extremo { background: #d32f2f; color: white; }
         .hm-legenda { font-size: 0.75rem; text-align: center; margin-bottom: 5px; }
 
-        /* Grids de Estatísticas */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .stat-box { background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid #e9ecef; font-size: 0.85rem;}
         .stat-box h4 { margin: 0 0 5px 0; color: #444; font-size: 0.9rem;}
         .stat-list { font-family: monospace; font-size: 0.95rem; font-weight: bold; color: #222; word-break: break-word;}
         .alert-text { color: #d32f2f; font-weight: bold; }
         
-        /* Inputs e Botões */
         textarea { width: 100%; height: 60px; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-family: monospace; font-size: 0.9rem; box-sizing: border-box; margin-bottom: 10px; resize: none;}
         button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;}
         button:active { background: #d35400; }
@@ -53,7 +45,6 @@
         .btn-half { width: 48%; display: inline-flex; }
         .btn-row { display: flex; justify-content: space-between; }
 
-        /* Output do Gerador */
         .game-output { background: #fffde7; padding: 15px; border-radius: 8px; border: 1px dashed #fbc02d; margin-top: 15px; display: none; }
         .game-numbers { font-family: monospace; font-size: 1.1rem; font-weight: bold; color: #333; text-align: center; letter-spacing: 2px; line-height: 1.5; margin: 10px 0;}
         .eval-result { background: #f1f8e9; padding: 10px; border-left: 4px solid #8bc34a; font-size: 0.85rem; margin-top: 10px; display: none;}
@@ -66,7 +57,6 @@
             <div class="last-update" id="update-time">Sincronizando dados...</div>
         </div>
 
-        <!-- Card: Último Sorteio -->
         <div class="card">
             <div class="card-title">
                 <span id="concurso-title">Último Sorteio</span>
@@ -74,9 +64,11 @@
             </div>
             <div class="balls-container" id="last-balls"></div>
             <div id="prize-info" class="prize-info">Carregando...</div>
+            <div style="text-align: center; font-size: 0.85rem; color: #555; background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #e9ecef;">
+                🔮 Próximo Sorteio: <b id="next-draw-date">Buscando na base...</b>
+            </div>
         </div>
 
-        <!-- Card: Mapa de Calor e Estatísticas -->
         <div class="card">
             <div class="card-title">🔥 Mapa de Calor & Tendências</div>
             <div class="hm-legenda">
@@ -96,26 +88,24 @@
                     <div class="stat-list" id="txt-frias">...</div>
                 </div>
                 <div class="stat-box">
-                    <h4>🚨 Máximo Atraso (Vai Estourar)</h4>
+                    <h4>🚨 Máximo Atraso</h4>
                     <div class="stat-list alert-text" id="txt-atraso">...</div>
                 </div>
                 <div class="stat-box">
-                    <h4>📈 Máxima Sequência (Pode Falhar)</h4>
+                    <h4>📈 Máxima Sequência</h4>
                     <div class="stat-list alert-text" id="txt-sequencia">...</div>
                 </div>
             </div>
         </div>
 
-        <!-- Card: Avaliador de Jogos -->
         <div class="card">
             <div class="card-title">⚖️ Avaliador de Jogo</div>
-            <p style="font-size: 0.8rem; margin: 0 0 10px 0; color: #666;">Cole suas 50 dezenas abaixo separadas por espaço para ver a força do seu jogo.</p>
-            <textarea id="eval-input" placeholder="Ex: 01 05 12 18... (50 dezenas)"></textarea>
+            <p style="font-size: 0.8rem; margin: 0 0 10px 0; color: #666;">Cole suas 50 dezenas separadas por espaço para ver a força do seu jogo.</p>
+            <textarea id="eval-input" placeholder="Ex: 01 05 12 18..."></textarea>
             <button class="btn-blue" onclick="avaliarJogo()">Avaliar Jogo</button>
             <div id="eval-output" class="eval-result"></div>
         </div>
 
-        <!-- Card: Gerador Inteligente e Exportação -->
         <div class="card">
             <div class="card-title">🤖 Gerador Inteligente</div>
             <p style="font-size: 0.8rem; margin: 0 0 10px 0; color: #666;">O algoritmo cruza os atrasos, quentes e ciclo atual para montar o jogo ideal.</p>
@@ -127,7 +117,6 @@
                 <hr style="border: 0; border-top: 1px dashed #ccc; margin: 15px 0;">
                 <div style="text-align: center; font-weight: bold; color: #2196F3; margin-bottom: 5px;">Aposta Espelho</div>
                 <div class="game-numbers" id="gen-espelho"></div>
-                <div style="text-align: center; font-size: 0.75rem; color: #888; margin-top: 10px;">Gerado por IA - Baseado nos últimos 50 concursos</div>
             </div>
 
             <div id="export-buttons" class="btn-row" style="display: none; margin-top: 10px;">
@@ -138,20 +127,17 @@
     </div>
 
     <script>
-        // Variáveis globais para armazenar dados da API
         let dataGlobal = null;
         let arrQuentes = [];
         let arrFrias = [];
         let cicloAtual = [];
         let pesosGlobais = [];
 
-        // 1. CARREGAR DADOS JSON
         fetch('data.json?t=' + new Date().getTime())
         .then(res => res.json())
         .then(data => {
             dataGlobal = data;
             document.getElementById('update-time').innerHTML = `Sincronizado: <b>${data.ultima_atualizacao || 'Hoje'}</b>`;
-            
             if(data.concursos && data.concursos.length > 0) {
                 renderizarUltimoSorteio(data.concursos[0]);
                 processarEstatisticas(data);
@@ -167,10 +153,15 @@
             const vPremio = "R$ " + parseFloat(ultimo.valor_premio || 0).toLocaleString('pt-BR', {minimumFractionDigits:2});
             if(ultimo.acumulou) {
                 pDiv.className = 'prize-info prize-acumulado';
-                pDiv.innerText = `🚨 ACUMULOU! Próximo: ${vPremio}`;
+                pDiv.innerText = `🚨 ACUMULOU! Estimativa: ${vPremio}`;
             } else {
-                pDiv.innerText = `🎉 ${ultimo.ganhadores} Ganhadores! Próximo: ${vPremio}`;
+                pDiv.className = 'prize-info';
+                pDiv.innerText = `🎉 ${ultimo.ganhadores} Ganhador(es)! Estimativa: ${vPremio}`;
             }
+
+            const dataP = ultimo.data_proximo || "A definir";
+            const diaS = ultimo.dia_semana_proximo || "";
+            document.getElementById('next-draw-date').innerText = diaS ? `${dataP} (${diaS})` : dataP;
         }
 
         function processarEstatisticas(data) {
@@ -179,7 +170,6 @@
             let atrasos = new Array(100).fill(-1);
             let seqs = new Array(100).fill(0);
             
-            // Frequencias e Sequências/Atrasos
             for(let d = 0; d < 100; d++) {
                 let atrasoCount = 0;
                 let seqCount = 0;
@@ -188,14 +178,16 @@
 
                 for(let i = 0; i < concursos.length; i++) {
                     const conc = concursos[i].dezenas;
-                    if(conc.includes(d)) {
+                    // Blindagem: força as dezenas antigas a serem interpretadas como número
+                    if(conc.some(x => parseInt(x, 10) === d)) {
                         freq[d]++;
                         if(!achouSorteio) {
                             achouSorteio = true;
-                            atrasoCount = i; // Sorteios atrás
+                            atrasoCount = i; 
                         }
-                        if(!falhou) seqCount++; // Continua contando a sequencia atual
+                        if(!falhou) seqCount++;
                     } else {
+                        if(!achouSorteio) atrasoCount++;
                         if(achouSorteio) falhou = true;
                     }
                 }
@@ -203,7 +195,6 @@
                 seqs[d] = seqCount;
             }
 
-            // Pintar Mapa de Calor
             let hmHtml = '';
             for(let i=0; i<100; i++) {
                 let f = freq[i];
@@ -215,18 +206,16 @@
             }
             document.getElementById('heatmap').innerHTML = hmHtml;
 
-            // Ordenar Quentes e Frias
             let objs = [];
             for(let i=0; i<100; i++) objs.push({d: i, f: freq[i], a: atrasos[i], s: seqs[i]});
             
-            objs.sort((a,b) => b.f - a.f); // Decrescente
+            objs.sort((a,b) => b.f - a.f);
             arrQuentes = objs.slice(0,15).map(x => x.d);
             arrFrias = objs.slice(-15).map(x => x.d);
             
             document.getElementById('txt-quentes').innerText = objs.slice(0,10).map(x => formatZ(x.d)).join(' ');
             document.getElementById('txt-frias').innerText = objs.slice(-10).map(x => formatZ(x.d)).join(' ');
 
-            // Maior Atraso (Vai Estourar) e Maior Sequência (Pode Falhar)
             objs.sort((a,b) => b.a - a.a);
             let topAtraso = objs[0];
             document.getElementById('txt-atraso').innerText = `Dezena ${formatZ(topAtraso.d)} (${topAtraso.a} jogos atrasada)`;
@@ -235,7 +224,6 @@
             let topSeq = objs[0];
             document.getElementById('txt-sequencia').innerText = `Dezena ${formatZ(topSeq.d)} (Saiu ${topSeq.s} jogos seguidos)`;
 
-            // Configurar pesos para o Gerador
             cicloAtual = data.ciclo_atual || [];
             pesosGlobais = new Array(100).fill(2);
             for(let i=0; i<100; i++) {
@@ -245,43 +233,36 @@
             }
         }
 
-        // 2. AVALIADOR DE JOGO
         function avaliarJogo() {
             if(!dataGlobal) return alert("Aguarde o carregamento dos dados.");
             const input = document.getElementById('eval-input').value;
-            // Extrai números
             let numeros = input.match(/\d+/g);
             if(!numeros) return alert("Insira dezenas válidas.");
             numeros = [...new Set(numeros.map(n => parseInt(n, 10)))].filter(n => n >= 0 && n <= 99);
             
-            if(numeros.length !== 50) {
-                return alert(`Um jogo da Lotomania exige exatamente 50 dezenas. Você inseriu ${numeros.length}.`);
-            }
+            if(numeros.length !== 50) return alert(`Um jogo da Lotomania exige 50 dezenas. Você inseriu ${numeros.length}.`);
 
-            let pares = 0, qQuentes = 0, qFrias = 0, qCiclo = 0;
+            let pares = 0, qQuentes = 0, qFrias = 0;
             numeros.forEach(n => {
                 if(n % 2 === 0) pares++;
                 if(arrQuentes.includes(n)) qQuentes++;
                 if(arrFrias.includes(n)) qFrias++;
-                if(cicloAtual.includes(n)) qCiclo++;
             });
 
             let impares = 50 - pares;
             let statusPar = (pares >= 22 && pares <= 28) ? "✅ Ideal" : "⚠️ Desequilibrado";
             
-            let laudo = `<b>Resultado da Avaliação:</b><br>`;
+            let laudo = `<b>Resultado:</b><br>`;
             laudo += `• Pares/Ímpares: ${pares}/${impares} (${statusPar})<br>`;
             laudo += `• Dezenas Quentes marcadas: ${qQuentes}<br>`;
             laudo += `• Dezenas Frias marcadas: ${qFrias}<br>`;
-            laudo += `• Dezenas do Ciclo cobertas: ${qCiclo} de ${cicloAtual.length}<br>`;
             
             let pontuacao = 0;
             if(pares >= 22 && pares <= 28) pontuacao++;
             if(qQuentes >= 5) pontuacao++;
-            if(qCiclo >= Math.min(5, cicloAtual.length)) pontuacao++;
 
-            if(pontuacao === 3) laudo += `<br><span style="color:#2e7d32; font-weight:bold;">🚀 Laudo: Jogo EXCELENTE. Padrão Forte.</span>`;
-            else if(pontuacao === 2) laudo += `<br><span style="color:#f57c00; font-weight:bold;">⚖️ Laudo: Jogo EQUILIBRADO.</span>`;
+            if(pontuacao === 2) laudo += `<br><span style="color:#2e7d32; font-weight:bold;">🚀 Laudo: Jogo EXCELENTE. Padrão Forte.</span>`;
+            else if(pontuacao === 1) laudo += `<br><span style="color:#f57c00; font-weight:bold;">⚖️ Laudo: Jogo EQUILIBRADO.</span>`;
             else laudo += `<br><span style="color:#c62828; font-weight:bold;">❌ Laudo: Jogo FRACO. Exige correção.</span>`;
 
             const out = document.getElementById('eval-output');
@@ -289,39 +270,31 @@
             out.style.display = 'block';
         }
 
-        // 3. GERADOR INTELIGENTE
         let palpiteAtual = "";
         let espelhoAtual = "";
 
         function gerarJogo() {
             if(!dataGlobal || pesosGlobais.length === 0) return alert("Dados não carregados.");
-            
             let pop = Array.from({length: 100}, (_, i) => i);
             let pesos = [...pesosGlobais];
             let bilhete = [];
 
-            // Sorteio ponderado sem repetição
             for(let i=0; i<50; i++) {
                 let soma = pesos.reduce((a, b) => a + b, 0);
                 let rand = Math.random() * soma;
-                let acumulado = 0;
-                let escolhidoIdx = 0;
-                
+                let acumulado = 0, escolhidoIdx = 0;
                 for(let j=0; j<pop.length; j++) {
                     acumulado += pesos[j];
                     if(rand <= acumulado) { escolhidoIdx = j; break; }
                 }
-                
                 bilhete.push(pop[escolhidoIdx]);
                 pop.splice(escolhidoIdx, 1);
                 pesos.splice(escolhidoIdx, 1);
             }
-
             bilhete.sort((a,b) => a - b);
             
-            // Validar paridade rapidamente (força entre 22 e 28 pares)
             let pares = bilhete.filter(n => n%2===0).length;
-            if(pares < 22 || pares > 28) return gerarJogo(); // Recusa e gera de novo internamente
+            if(pares < 22 || pares > 28) return gerarJogo();
 
             let todos = new Set(Array.from({length: 100}, (_, i) => i));
             let bilheteSet = new Set(bilhete);
@@ -337,43 +310,31 @@
             document.getElementById('export-buttons').style.display = 'flex';
         }
 
-        // 4. EXPORTAÇÃO WHATSAPP
         function enviarWhatsAppTxt() {
             let texto = `🤖 *Lotomania Preditiva*\n\n🎯 *Aposta Principal:*\n${palpiteAtual}\n\n🛡️ *Espelho:*\n${espelhoAtual}`;
-            let url = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
-            window.open(url, '_blank');
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`, '_blank');
         }
 
         function enviarWhatsAppImg() {
             const printArea = document.getElementById('print-area');
-            // Altera temporariamente a cor de fundo para o print ficar bonito
             let oldBg = printArea.style.background;
             printArea.style.background = "#ffffff";
-            
             html2canvas(printArea, {scale: 2}).then(canvas => {
-                printArea.style.background = oldBg; // restaura
-                
+                printArea.style.background = oldBg; 
                 canvas.toBlob(blob => {
                     const file = new File([blob], 'lotomania.png', { type: 'image/png' });
-                    // Tenta usar o Web Share API nativo do celular
                     if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                        navigator.share({
-                            title: 'Jogo Lotomania',
-                            text: 'Meu jogo gerado pela Inteligência Artificial:',
-                            files: [file]
-                        }).catch(err => console.log('Compartilhamento cancelado', err));
+                        navigator.share({ title: 'Lotomania', text: 'Meu jogo:', files: [file] }).catch(e => console.log(e));
                     } else {
-                        // Fallback: Baixa a imagem se o celular não suportar
                         let a = document.createElement('a');
                         a.href = URL.createObjectURL(blob);
-                        a.download = 'meu_jogo_lotomania.png';
+                        a.download = 'meu_jogo.png';
                         a.click();
-                        alert("A imagem foi baixada. Abra sua galeria e envie no WhatsApp!");
+                        alert("Imagem salva! Envie pelo WhatsApp.");
                     }
                 });
             });
         }
-
         function formatZ(n) { return n < 10 ? '0'+n : n; }
     </script>
 </body>
