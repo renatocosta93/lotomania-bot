@@ -1,6 +1,37 @@
 {
   "concursos": [
     {
+      "concurso": 2977,
+      "data": "18/09/2026",
+      "dezenas": [
+        1,
+        5,
+        9,
+        12,
+        15,
+        18,
+        21,
+        30,
+        37,
+        38,
+        41,
+        42,
+        44,
+        46,
+        47,
+        54,
+        63,
+        87,
+        96,
+        98
+      ],
+      "acumulou": true,
+      "ganhadores": 0,
+      "valor_premio": 3500000.0,
+      "data_proximo": "21/09/2026",
+      "dia_semana_proximo": "segunda-feira"
+    },
+    {
       "concurso": 2976,
       "data": "16/09/2026",
       "dezenas": [
@@ -153,24 +184,16 @@
   ],
   "ciclo_atual": [
     0,
-    1,
-    5,
     14,
-    15,
-    18,
     22,
     27,
-    30,
     39,
     40,
-    44,
     48,
-    54,
     56,
     57,
     60,
     62,
-    63,
     67,
     68,
     69,
@@ -181,12 +204,10 @@
     83,
     85,
     86,
-    87,
     88,
     90,
-    98,
     99
   ],
-  "ultima_atualizacao": "18/09/2026 \u00e0s 22:03:36",
-  "last_message_id": 16
+  "ultima_atualizacao": "19/09/2026 \u00e0s 09:00:28",
+  "last_message_id": 17
 }
