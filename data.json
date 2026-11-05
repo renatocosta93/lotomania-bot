@@ -1,6 +1,37 @@
 {
   "concursos": [
     {
+      "concurso": 2995,
+      "data": "04/11/2026",
+      "dezenas": [
+        4,
+        12,
+        19,
+        20,
+        23,
+        26,
+        31,
+        33,
+        40,
+        49,
+        51,
+        58,
+        61,
+        66,
+        68,
+        74,
+        75,
+        83,
+        85,
+        92
+      ],
+      "acumulou": true,
+      "ganhadores": 0,
+      "valor_premio": 3200000.0,
+      "data_proximo": "06/11/2026",
+      "dia_semana_proximo": "sexta-feira"
+    },
+    {
       "concurso": 2994,
       "data": "30/10/2026",
       "dezenas": [
@@ -681,6 +712,6 @@
   "ciclo_atual": [
     88
   ],
-  "ultima_atualizacao": "03/11/2026 \u00e0s 23:57:39",
-  "last_message_id": 49
+  "ultima_atualizacao": "05/11/2026 \u00e0s 09:00:39",
+  "last_message_id": 50
 }
